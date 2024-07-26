@@ -37,6 +37,7 @@ export const jwtSecret = processVariable('EXPRESS_JWT_SECRET');
 export const deployedFlyUrl = processVariable('EXPRESS_DEPLOYED_FLY_URL');
 export const deployedCustomUrl = processVariable('EXPRESS_DEPLOYED_CUSTOM_URL');
 export const developmentUrl = processVariable('EXPRESS_DEVELOPMENT_URL');
+export const dbConnectionString = processVariable('EXPRESS_MONGO_DB_STRING')
 
 // Numbers
 export const port: number = parseInt(processVariable("EXPRESS_PORT"), 10);
