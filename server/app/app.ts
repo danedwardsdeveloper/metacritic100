@@ -1,16 +1,15 @@
-import express from 'express';
-import * as dotenv from 'dotenv';
-dotenv.config();
+import express from 'express'
 
-const app = express();
+import { connectDB } from './database/database.js';
+import setupMiddleware from './middleware/setupMiddleware.js'
+import publicRouter from './routes/public.js'
+import protectedRouter from './routes/protected.js'
 
-import setupMiddleware from './middleware/middleware.js';
-setupMiddleware(app);
+const app = express()
+connectDB();
+setupMiddleware(app)
 
-import publicRouter from './routes/public.js';
-app.use('/api', publicRouter);
+app.use('/api', publicRouter)
+app.use('/api', protectedRouter)
 
-import protectedRouter from './routes/protected.js';
-app.use('/api', protectedRouter);
-
-export default app;
+export default app
