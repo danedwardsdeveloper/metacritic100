@@ -6,10 +6,10 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
 
-import app from '../src/server/app/app.js';
+import app from '../../server/app/app.ts';
 
 describe('API Tests', () => {
-	const jwtSecret = process.env.JWT_SECRET;
+	const jwtSecret = process.env.EXPRESS_JWT_SECRET;
 	let validToken;
 
 	before(() => {
@@ -170,7 +170,7 @@ describe('API Tests', () => {
 					expect(tokenCookie).to.include('token=;');
 					expect(tokenCookie).to.include('HttpOnly');
 
-					if (process.env.VITE_NODE_ENV === 'production') {
+					if (process.env.VITE_REACT_ENV === 'production') {
 						expect(tokenCookie).to.include('Secure');
 						expect(tokenCookie).to.include('SameSite=Strict');
 					} else {
