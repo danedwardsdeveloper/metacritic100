@@ -10,7 +10,7 @@ const publicRouter = express.Router();
 const users = [{ id: 1, email: 'user@gmail.com', password: 'securePassword' }];
 
 publicRouter.get('/', (req, res) => {
-	res.json({ message: 'Plant Counter API' });
+	res.json({ message: 'MetaCritic100 API' });
 });
 
 
