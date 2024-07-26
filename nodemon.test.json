@@ -1,0 +1,6 @@
+{
+	"watch": ["server/", "tests/server/", ".env", "nodemon.test.json"],
+	"ext": "ts,js",
+	"ignore": [],
+	"exec": "node --import ./tests/test-register.js --loader tsx --test tests/server/**/*.test.js"
+}
