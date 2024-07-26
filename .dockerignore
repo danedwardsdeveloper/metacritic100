@@ -1,0 +1,63 @@
+# Version control
+.git
+.gitignore
+
+# Node modules (if you're installing dependencies during the Docker build)
+node_modules
+
+# Source files (since you're building locally)
+src
+
+# Development and environment files
+.env
+.env.*
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.vscode
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Testing
+coverage
+*.test.js
+
+# Temporary files
+*.tmp
+*.temp
+.DS_Store
+
+# Docker
+Dockerfile
+.dockerignore
+
+# CI/CD
+.github
+.gitlab-ci.yml
+.travis.yml
+
+# Documentation
+README.md
+CHANGELOG.md
+docs
+
+# Configuration files that aren't needed in production
+.eslintrc
+.prettierrc
+.babelrc
+
+# Build tools configuration
+vite.config.js
+webpack.config.js
+
+# Other unnecessary files for production
+*.md
+LICENSE

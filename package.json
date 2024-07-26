@@ -1,0 +1,43 @@
+{
+	"name": "express-react-monorepo",
+	"version": "1.0.0",
+	"description": "An API and React app served by Express",
+	"main": "./dist/server/server.js",
+	"type": "module",
+	"scripts": {
+		"dev": "concurrently  \"nodemon --quiet --config nodemon.server.json\" \"pnpm --prefix client run dev\"",
+		"build": "tsc -p tsconfig.json && cd client && pnpm run build && cd .. && docker build -t express-react-monorepo . && docker run -p 3000:3000 --env-file .env -e EXPRESS_ENV=build --rm --name express-react-container express-react-monorepo",
+		"deploy": "cd ops && node checkVariables && cd .. && tsc -p tsconfig.json && cd client && pnpm run build:production && cd .. && fly deploy $(grep -v '^#' .env | xargs -I {} echo '-e {}')"
+	},
+	"author": "Dan Edwards",
+	"license": "ISC",
+	"dependencies": {
+		"chalk": "^4.1.2",
+		"concurrently": "^8.2.2",
+		"cookie-parser": "^1.4.6",
+		"cors": "^2.8.5",
+		"express": "^4.19.2",
+		"http": "0.0.1-security",
+		"jsonwebtoken": "^9.0.2",
+		"nodemon": "^3.1.4"
+	},
+	"devDependencies": {
+		"@types/cookie-parser": "^1.4.7",
+		"@types/cors": "^2.8.17",
+		"@types/express": "^4.17.21",
+		"@types/jsonwebtoken": "^9.0.6",
+		"@types/node": "^20.14.11",
+		"chai": "^5.1.1",
+		"chai-http": "^5.0.0",
+		"chromedriver": "^127.0.0",
+		"dotenv": "^16.4.5",
+		"less": "^4.2.0",
+		"mocha": "^10.7.0",
+		"open": "^10.1.0",
+		"selenium-webdriver": "^4.23.0",
+		"supertest": "^7.0.0",
+		"ts-node": "^10.9.2",
+		"tsx": "^4.16.2",
+		"typescript": "^5.5.4"
+	}
+}
