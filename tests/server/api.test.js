@@ -1,12 +1,24 @@
-import { use, expect } from 'chai';
+import { describe, it, before, beforeEach } from 'node:test';
+import assert from 'node:assert';
+import chai from 'chai';
 import chaiHttp from 'chai-http';
-const chai = use(chaiHttp);
-import request from 'supertest';
+import app from '../../server/app/app.js';
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
-dotenv.config();
 
-import app from '../../server/app/app.ts';
+chai.use(chaiHttp);
+const { expect } = chai;
+
+describe('API', () => {
+	it('should return 200 on /', (done) => {
+		chai
+			.request(app)
+			.get('/')
+			.end((err, res) => {
+				expect(res).to.have.status(200);
+				done();
+			});
+	});
+});
 
 describe('API Tests', () => {
 	const jwtSecret = process.env.EXPRESS_JWT_SECRET;
