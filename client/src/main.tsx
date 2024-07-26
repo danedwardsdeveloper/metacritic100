@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom';
 
 import App from './App';
-import Home from './app/components/Home';
+import FilmsList from './app/components/FilmsList';
 import Protected from './app/components/Protected';
 import SignIn from './app/components/SignIn';
 import SignOut from './app/components/SignOut';
@@ -16,11 +16,12 @@ import SignOut from './app/components/SignOut';
 import './index.tailwind.css';
 
 import { AuthProvider } from './app/contexts/AuthContext';
+import { FilmsProvider } from './app/contexts/FilmsContext';
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
 		<Route path="/" element={<App />}>
-			<Route index element={<Home />} />
+			<Route index element={<FilmsList />} />
 			<Route path="protected" element={<Protected />} />
 			<Route path="sign-in" element={<SignIn />} />
 			<Route path="sign-out" element={<SignOut />} />
@@ -31,7 +32,9 @@ const router = createBrowserRouter(
 ReactDOM.createRoot(document.getElementById('root')! as HTMLElement).render(
 	<React.StrictMode>
 		<AuthProvider>
-			<RouterProvider router={router} />
+			<FilmsProvider>
+				<RouterProvider router={router} />
+			</FilmsProvider>
 		</AuthProvider>
 	</React.StrictMode>
 );
