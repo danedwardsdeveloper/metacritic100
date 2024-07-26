@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { signIn } from '../services/AuthService';
 
 export default function SignIn() {
-	const [email, setEmail] = useState('user@gmail.com');
+	const [email, setEmail] = useState('dan@gmail.com');
 	const [password, setPassword] = useState('securePassword');
 	const [errorMessage, setErrorMessage] = useState('');
 
