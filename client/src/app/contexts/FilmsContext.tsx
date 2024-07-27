@@ -5,13 +5,20 @@ import {
 	useEffect,
 	ReactNode,
 } from 'react';
+
 import { filmsData, Film } from '../data/filmsData.ts';
+import { useAuth } from './AuthContext';
+import {
+	getUserFilmsFromDb,
+	updateDatabaseWithLocalChanges,
+} from '../services/FilmsService.ts';
 
 interface FilmsContextType {
 	seenFilms: Record<string, boolean>;
 	isLoading: boolean;
 	toggleFilmSeen: (filmId: string) => void;
 	filmsData: Film[];
+	syncWithDatabase: () => Promise<void>;
 }
 
 const FilmsContext = createContext<FilmsContextType | undefined>(undefined);
@@ -23,17 +30,24 @@ interface FilmsProviderProps {
 export const FilmsProvider: React.FC<FilmsProviderProps> = ({ children }) => {
 	const [seenFilms, setSeenFilms] = useState<Record<string, boolean>>({});
 	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const { isAuthenticated } = useAuth();
 
 	useEffect(() => {
 		initializeFilms();
 	}, []);
 
+	useEffect(() => {
+		if (isAuthenticated) {
+			syncWithDatabase();
+		}
+	}, [isAuthenticated]);
+
 	const initializeFilms = () => {
 		setIsLoading(true);
-		const localSeenFilms: Record<string, boolean> = JSON.parse(
+		const localStorageFilms: Record<string, boolean> = JSON.parse(
 			localStorage.getItem('seenFilms') || '{}'
 		);
-		setSeenFilms(localSeenFilms);
+		setSeenFilms(localStorageFilms);
 		setIsLoading(false);
 	};
 
@@ -45,10 +59,29 @@ export const FilmsProvider: React.FC<FilmsProviderProps> = ({ children }) => {
 		});
 	};
 
+	const syncWithDatabase = async () => {
+		setIsLoading(true);
+		try {
+			const dbSeenFilms = await getUserFilmsFromDb();
+
+			const mergedSeenFilms = { ...seenFilms, ...dbSeenFilms };
+
+			localStorage.setItem('seenFilms', JSON.stringify(mergedSeenFilms));
+			setSeenFilms(mergedSeenFilms);
+
+			await updateDatabaseWithLocalChanges(mergedSeenFilms);
+		} catch (error) {
+			console.error('Error syncing with database:', error);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
 	const value: FilmsContextType = {
+		toggleFilmSeen,
+		syncWithDatabase,
 		seenFilms,
 		isLoading,
-		toggleFilmSeen,
 		filmsData,
 	};
 
