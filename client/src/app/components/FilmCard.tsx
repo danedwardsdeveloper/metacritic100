@@ -23,7 +23,7 @@ export default ({ film }: FilmCardProps): React.ReactElement => {
 				<input
 					type="checkbox"
 					id={film.filmId}
-					className="bg-slate-100 rounded-sm focus:ring-green-500 text-green-500 h-5 w-5"
+					className="bg-slate-100 hover:bg-slate-200 rounded-sm focus:ring-green-500 text-green-500 hover:text-green-600 h-5 w-5"
 					checked={seenFilms[film.filmId] || false}
 					onChange={handleToggle}
 				/>
