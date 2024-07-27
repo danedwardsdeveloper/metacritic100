@@ -28,7 +28,7 @@ publicRouter.post('/create-user', async (req: Request, res: Response) => {
 			name,
 			email,
 			password: hashedPassword,
-			films: {}
+			films: {},
 		});
 
 		await newUser.save();
@@ -50,9 +50,13 @@ publicRouter.post('/sign-in', async (req: Request, res: Response) => {
 			return res.status(401).json({ message: 'Invalid credentials' });
 		}
 
-		const token = jwt.sign({ userId: user._id, email: user.email }, jwtSecret, {
-			expiresIn: '1h',
-		});
+		const token = jwt.sign(
+			{ userId: user._id, email: user.email },
+			jwtSecret,
+			{
+				expiresIn: '1h',
+			}
+		);
 
 		const inProduction: boolean = expressEnv === 'production';
 
@@ -75,14 +79,31 @@ publicRouter.get('/validate-token', (req: Request, res: Response) => {
 	const token = req.cookies.token;
 
 	if (!token) {
-		return res.json({ valid: false });
+		return res.status(401).json({
+			message: 'No token provided',
+		});
 	}
 
 	try {
-		jwt.verify(token, jwtSecret);
-		res.json({ valid: true });
+		const decoded = jwt.verify(token, jwtSecret) as jwt.JwtPayload;
+		res.json({
+			userId: decoded.userId,
+		});
 	} catch (error) {
-		res.json({ valid: false });
+		if (error instanceof jwt.JsonWebTokenError) {
+			return res.status(401).json({
+				message: 'Invalid token',
+			});
+		} else if (error instanceof jwt.TokenExpiredError) {
+			return res.status(401).json({
+				message: 'Expired token',
+			});
+		} else {
+			console.error('Unexpected error during token validation:', error);
+			return res.status(500).json({
+				message: 'Unexpected error',
+			});
+		}
 	}
 });
 
