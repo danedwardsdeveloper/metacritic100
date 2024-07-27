@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { jwtSecret, expressEnv } from '../../utils/environmentChecks.js';
-import { User } from '../models/User';
+import { User } from '../models/User.js';
 
 const publicRouter = express.Router();
 
@@ -13,7 +13,7 @@ publicRouter.get('/', (req: Request, res: Response) => {
 	res.json({ message: 'MetaCritic100 API' });
 });
 
-publicRouter.post('/create-user', async (req: Request, res: Response) => {
+publicRouter.post('/create-account', async (req: Request, res: Response) => {
 	const { name, email, password } = req.body;
 
 	try {
@@ -28,7 +28,7 @@ publicRouter.post('/create-user', async (req: Request, res: Response) => {
 			name,
 			email,
 			password: hashedPassword,
-			films: {},
+			films: [],
 		});
 
 		await newUser.save();
@@ -37,6 +37,45 @@ publicRouter.post('/create-user', async (req: Request, res: Response) => {
 	} catch (error) {
 		console.error('Sign-up error:', error);
 		res.status(500).json({ message: 'An error occurred during sign-up' });
+	}
+});
+
+publicRouter.delete('/delete-account', async (req: Request, res: Response) => {
+	const token = req.cookies.token;
+
+	if (!token) {
+		return res.status(401).json({ message: 'No token provided' });
+	}
+
+	try {
+		const decoded = jwt.verify(token, jwtSecret) as jwt.JwtPayload;
+		const userId = decoded.userId;
+
+		const deletedUser = await User.findByIdAndDelete(userId);
+
+		if (!deletedUser) {
+			return res.status(404).json({ message: 'User not found' });
+		}
+
+		res.clearCookie('token', {
+			httpOnly: true,
+			secure: true,
+			sameSite: expressEnv === 'production' ? 'strict' : 'none',
+			path: '/',
+		});
+
+		res.status(200).json({ message: 'Account deleted successfully' });
+	} catch (error) {
+		if (error instanceof jwt.JsonWebTokenError) {
+			return res.status(401).json({ message: 'Invalid token' });
+		} else if (error instanceof jwt.TokenExpiredError) {
+			return res.status(401).json({ message: 'Expired token' });
+		} else {
+			console.error('Error deleting account:', error);
+			res.status(500).json({
+				message: 'An error occurred while deleting the account',
+			});
+		}
 	}
 });
 
@@ -50,13 +89,9 @@ publicRouter.post('/sign-in', async (req: Request, res: Response) => {
 			return res.status(401).json({ message: 'Invalid credentials' });
 		}
 
-		const token = jwt.sign(
-			{ userId: user._id, email: user.email },
-			jwtSecret,
-			{
-				expiresIn: '1h',
-			}
-		);
+		const token = jwt.sign({ userId: user._id }, jwtSecret, {
+			expiresIn: '1h',
+		});
 
 		const inProduction: boolean = expressEnv === 'production';
 
@@ -68,7 +103,11 @@ publicRouter.post('/sign-in', async (req: Request, res: Response) => {
 			path: '/',
 		});
 
-		res.json({ message: 'Login successful', userId: user._id });
+		res.json({
+			message: 'Signed in successfully',
+			userId: user._id,
+			name: user.name,
+		});
 	} catch (error) {
 		console.error('Sign-in error:', error);
 		res.status(500).json({ message: 'An error occurred during sign-in' });
