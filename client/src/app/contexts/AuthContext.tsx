@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+
 import { validateToken } from '../services/AuthService';
 
 interface AuthContextType {
