@@ -63,7 +63,11 @@ describe('POST /api/sign-in', () => {
 			.expect('Content-Type', /json/)
 			.expect(200);
 
-		expect(response.body).toHaveProperty('message', 'Login successful');
+		expect(response.body).toEqual({
+			message: 'Signed in successfully',
+			userId: '66a55fee5d712906e25e9bb5',
+			name: 'Dan',
+		});
 		expect(response.headers['set-cookie']).toBeDefined();
 	});
 });
