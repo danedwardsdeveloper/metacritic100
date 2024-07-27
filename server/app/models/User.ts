@@ -1,31 +1,30 @@
-import mongoose, { Document, Schema } from 'mongoose'
+import mongoose, { Document } from 'mongoose';
 
-interface IFilm {
-    name: string;
-    filmId: string;
-    seen: boolean;
-    notes?: string;
+export interface IUserFilm {
+	filmId: string;
+	seen: boolean;
+	notes: string;
 }
 
-interface IUser extends Document {
-    name: string;
-    email: string;
-    password: string;
-    films: { [key: string]: IFilm };
+export interface IUser extends Document {
+	userId: string;
+	name: string;
+	email: string;
+	password: string;
+	films: IUserFilm[];
 }
 
-const FilmSchema = new Schema({
-    name: { type: String, required: true },
-    filmId: { type: String, required: true },
-    seen: { type: Boolean, default: false },
-    notes: { type: String }
-})
+const UserSchema = new mongoose.Schema<IUser>({
+	name: { type: String, required: true },
+	email: { type: String, required: true, unique: true },
+	password: { type: String, required: true },
+	films: [
+		{
+			filmId: String,
+			seen: Boolean,
+			notes: String,
+		},
+	],
+});
 
-const UserSchema = new Schema<IUser>({
-    name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    films: { type: Map, of: FilmSchema, default: {} }
-})
-
-export const User = mongoose.model<IUser>('User', UserSchema)
+export const User = mongoose.model<IUser>('User', UserSchema);
