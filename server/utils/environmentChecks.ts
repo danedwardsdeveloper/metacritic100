@@ -8,7 +8,7 @@ function processVariable(variable: string): string {
     if (!value) throw new Error(chalk.red(`${variable} not set`));
 
     const isSecret = variable.toLowerCase().includes('secret');
-    console.log(`${variable}: ${chalk.blue(isSecret ? `${value.slice(0, 6)}...` : value)}`);
+    console.log(`${variable}: ${chalk.blue(isSecret ? `${value.slice(0, 15)}...` : value)}`);
     return value;
 }
 
@@ -37,7 +37,7 @@ export const jwtSecret = processVariable('EXPRESS_JWT_SECRET');
 export const deployedFlyUrl = processVariable('EXPRESS_DEPLOYED_FLY_URL');
 export const deployedCustomUrl = processVariable('EXPRESS_DEPLOYED_CUSTOM_URL');
 export const developmentUrl = processVariable('EXPRESS_DEVELOPMENT_URL');
-export const dbConnectionString = processVariable('EXPRESS_MONGO_DB_STRING')
+export const dbConnectionString = processVariable('EXPRESS_SECRET_MONGO_DB_STRING')
 
 // Numbers
 export const port: number = parseInt(processVariable("EXPRESS_PORT"), 10);
