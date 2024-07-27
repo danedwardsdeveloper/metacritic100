@@ -4,13 +4,24 @@ Track how many of MetaCritic's top 100 films you've seen with this MERN web app.
 
 # Current Task
 
--  [ ] Connect database
+# To-Do List (Minimum Viable Product)
 
-# To-Do List
+-  [ ] Merge local storage on sign-in
+-  [ ] Remove `persist:root`
+-  [ ] Set up API testing
+-  [ ] Write a `/toggle-seen` route
+-  [ ]
+-  [ ]
+-  [ ]
+-  [ ]
+-  [ ]
 
--  [ ] Add static films data to the client to reduce unnecessary requests
--  [ ] Remove static films data from the database
--  [ ] Routes
-   -  [ ] The only public routes are `/sign-in` and `/validate-token`
-   -  [ ] `/protected/all` Returns an object with all the films, plus the 'seen' status, and any notes from the signed-in user. userId is supplied in the jwt cookie.
+# To-Do List (Nice Extras)
+
+-  [ ] Write `/delete-account` route
+-  [ ] Summary page for social media
+-  [ ] Add profile menu
+-  [ ] Profile menu initial
+-  [ ] Style the FilmCard elements nicely
+-  [ ]
 -  [ ]
