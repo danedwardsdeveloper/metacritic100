@@ -1,7 +1,8 @@
-import { describe, it, beforeAll, beforeEach, expect } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import supertest from 'supertest';
 import app from '../../server/app/app.js';
 import jwt from 'jsonwebtoken';
+import { randomBytes } from 'crypto';
 
 const request = supertest(app);
 
@@ -65,7 +66,7 @@ describe('POST /api/sign-in', () => {
 
 		expect(response.body).toEqual({
 			message: 'Signed in successfully',
-			userId: '66a55fee5d712906e25e9bb5',
+			userId: '66a56a870a4d84411b3f43fc',
 			name: 'Dan',
 		});
 		expect(response.headers['set-cookie']).toBeDefined();
@@ -156,5 +157,97 @@ describe('POST /api/sign-out', () => {
 
 		expect(response.status).toBe(401);
 		expect(response.body.message).toBe('No token provided');
+	});
+});
+
+function generateRandomString(length: number = 8): string {
+	return randomBytes(length).toString('hex');
+}
+
+function createTemporaryUser() {
+	const timestamp = Date.now();
+	return {
+		name: generateRandomString(),
+		email: `test_${timestamp}@example.com`,
+		password: 'password123',
+	};
+}
+
+const temporaryUser = createTemporaryUser();
+
+describe('POST /api/create-account', () => {
+	it('should return 400 if required fields are missing', async () => {
+		const incompleteUser = { name: 'incomplete' };
+		const response = await request
+			.post('/api/create-account')
+			.send(incompleteUser)
+			.expect(400);
+		expect(response.body).toHaveProperty(
+			'message',
+			'Missing required fields'
+		);
+	});
+
+	it('should return 409 if name already exists', async () => {
+		const existingUser = {
+			name: 'Dan',
+			email: 'dan@gmail.com',
+			password: 'securePassword',
+		};
+
+		await request.post('/api/create-account').send(existingUser);
+
+		const response = await request
+			.post('/api/create-account')
+			.send(existingUser)
+			.expect(409);
+	});
+
+	it('should create a new account successfully', async () => {
+		const response = await request
+			.post('/api/create-account')
+			.send(temporaryUser)
+			.expect(201);
+
+		expect(response.body).toHaveProperty(
+			'message',
+			'User created successfully'
+		);
+		expect(response.body).toHaveProperty('userId');
+		expect(response.body).toHaveProperty('name', temporaryUser.name);
+		expect(response.body).not.toHaveProperty('email');
+		expect(response.body).not.toHaveProperty('password');
+	});
+});
+
+describe('DELETE /api/delete-account', () => {
+	it('should delete an existing account successfully', async () => {
+		const deleteResponse = await request
+			.delete('/api/delete-account')
+			.send(temporaryUser)
+			.expect(200);
+
+		expect(deleteResponse.body).toHaveProperty(
+			'message',
+			'Account deleted successfully'
+		);
+	});
+
+	it('should return 404 if account does not exist', async () => {
+		const response = await request
+			.delete('/api/delete-account')
+			.send({ userId: 'nonexistent-id' })
+			.expect(404);
+
+		expect(response.body).toHaveProperty('error');
+	});
+
+	it('should return 400 if userId is not provided', async () => {
+		const response = await request
+			.delete('/api/delete-account')
+			.send({})
+			.expect(400);
+
+		expect(response.body).toHaveProperty('error');
 	});
 });
