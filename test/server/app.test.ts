@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 
 const request = supertest(app);
 
-import { jwtSecret } from '../../server/utils/environmentChecks.js';
+import { jwtSecret, expressEnv } from '../../server/utils/environmentChecks.js';
 
 describe('API welcome message', () => {
 	it('should return 200 on /api', async () => {
@@ -120,10 +120,9 @@ describe('POST /api/sign-out', () => {
 			.set('Cookie', `token=${validToken}`);
 
 		expect(response.status).toBe(200);
-		expect(response.body).toHaveProperty(
-			'message',
-			'Logged out successfully'
-		);
+		expect(response.body).toEqual({
+			message: 'Signed out successfully',
+		});
 
 		const cookies = response.headers['set-cookie'];
 		expect(cookies).toBeDefined();
@@ -140,7 +139,7 @@ describe('POST /api/sign-out', () => {
 		expect(tokenCookie).toContain('token=;');
 		expect(tokenCookie).toContain('HttpOnly');
 
-		if (process.env.VITE_REACT_ENV === 'production') {
+		if (expressEnv === 'production') {
 			expect(tokenCookie).toContain('Secure');
 			expect(tokenCookie).toContain('SameSite=Strict');
 		} else {
@@ -148,12 +147,10 @@ describe('POST /api/sign-out', () => {
 		}
 	});
 
-	it('should return 200 even if not logged in', async () => {
+	it('should fail to sign out without a token', async () => {
 		const response = await request.post('/api/sign-out');
-		expect(response.status).toBe(200);
-		expect(response.body).toHaveProperty(
-			'message',
-			'Logged out successfully'
-		);
+
+		expect(response.status).toBe(401);
+		expect(response.body.message).toBe('No token provided');
 	});
 });
