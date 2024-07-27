@@ -17,14 +17,17 @@ export default ({ film }: FilmCardProps): React.ReactElement => {
 		<div className="bg-slate-300 rounded-md m-4 p-5">
 			<h3 className="font-bold">{film.title}</h3>
 			<p>{film.year}</p>
+			<p>{film.language}</p>
 			<p>{film.description}</p>
-			<label>
+			<label htmlFor={film.filmId}>
 				<input
 					type="checkbox"
+					id={film.filmId}
+					className="bg-slate-100 rounded-sm focus:ring-green-500 text-green-500 h-5 w-5"
 					checked={seenFilms[film.filmId] || false}
 					onChange={handleToggle}
 				/>
-				Seen
+				&nbsp; Seen
 			</label>
 		</div>
 	);
