@@ -1,27 +1,34 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 
 import { expressEnv } from '../../utils/environmentChecks.js';
-import { verifyToken } from '../middleware/verifyToken.js';
-import { syncUserFilms } from '../services/filmService.js';
+import {
+	validateToken,
+	clearToken,
+} from '../middleware/components/authTokens.js';
+import { syncUserFilms, toggleFilm } from '../services/filmService.js';
 import { updateUserFilm, getUserFilms } from '../services/userService';
-
-interface CustomRequest extends Request {
-	userId?: string;
-}
+import { User } from '../models/User.js';
+import { AuthenticatedRequest } from '../models/AuthenticatedRequest.js';
 
 const protectedRouter = express.Router();
-protectedRouter.use(verifyToken);
+protectedRouter.use(validateToken);
 
-protectedRouter.get('/protected', (req: CustomRequest, res: Response) => {
-	res.json({ message: 'This is a protected route', userId: req.userId });
-});
+protectedRouter.get(
+	'/protected',
+	(req: AuthenticatedRequest, res: Response) => {
+		res.json({
+			name: req.user?.name,
+			userId: req.user?.userId,
+			message: 'This is a protected route',
+		});
+	}
+);
 
 protectedRouter.get(
 	'/all',
-	verifyToken,
-	async (req: CustomRequest, res: Response) => {
+	async (req: AuthenticatedRequest, res: Response) => {
 		try {
-			const userId = req.userId;
+			const userId = req.user?.userId;
 
 			if (!userId) {
 				return res.status(400).json({ error: 'User ID is required' });
@@ -38,24 +45,24 @@ protectedRouter.get(
 
 protectedRouter.post(
 	'/toggle-film',
-	verifyToken,
-	async (req: CustomRequest, res: Response) => {
+	async (req: AuthenticatedRequest, res: Response) => {
 		try {
-			const userId = req.userId;
-			const { filmId, seen } = req.body;
+			const userId = req.user?.userId;
+			console.log(`User ID: ${userId}`);
+			const { filmId } = req.body;
 
 			if (!userId) {
 				return res.status(401).json({ error: 'User not authenticated' });
 			}
 
-			if (typeof filmId !== 'string' || typeof seen !== 'boolean') {
+			if (typeof filmId !== 'string') {
 				return res.status(400).json({ error: 'Invalid request body' });
 			}
 
-			await syncUserFilms(userId, filmId, seen);
+			await toggleFilm(userId, filmId);
 
 			res.status(200).json({
-				message: 'Film seen status updated successfully',
+				message: 'Film seen status toggled successfully',
 			});
 		} catch (error) {
 			console.error('Error toggling film seen status:', error);
@@ -72,5 +79,29 @@ protectedRouter.post('/sign-out', (req: Request, res: Response) => {
 	});
 	res.status(200).json({ message: 'Signed out successfully' });
 });
+
+protectedRouter.delete(
+	'/delete-account',
+	async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+		try {
+			const userId = req.user?.userId;
+
+			if (!userId) {
+				return res.status(401).json({ error: 'User not authenticated' });
+			}
+
+			const deletedUser = await User.findOneAndDelete({ userId: userId });
+
+			if (!deletedUser) {
+				return res.status(404).json({ message: 'User not found' });
+			}
+
+			clearToken(res);
+			res.status(200).json({ message: 'Account deleted successfully' });
+		} catch (error) {
+			next(error);
+		}
+	}
+);
 
 export default protectedRouter;
