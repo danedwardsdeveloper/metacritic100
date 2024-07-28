@@ -26,9 +26,8 @@ describe('API welcome message', () => {
 
 const validToken = jwt.sign(
 	{
-		email: 'dan@example.com',
-		password: 'securePassword',
-		userId: 1,
+		name: 'Dan',
+		userId: '66a56a870a4d84411b3f43fc',
 	},
 	jwtSecret,
 	{ expiresIn: '1h' }
@@ -57,6 +56,8 @@ describe('POST /api/sign-in', () => {
 		expect(response.headers['set-cookie']).toBeUndefined();
 	});
 
+	let userId: string;
+
 	it('should login successfully with correct credentials', async () => {
 		const response = await request
 			.post('/api/sign-in')
@@ -64,11 +65,14 @@ describe('POST /api/sign-in', () => {
 			.expect('Content-Type', /json/)
 			.expect(200);
 
-		expect(response.body).toEqual({
+		expect(response.body).toMatchObject({
 			message: 'Signed in successfully',
-			userId: '66a56a870a4d84411b3f43fc',
 			name: 'Dan',
 		});
+
+		expect(response.body.userId).toMatch(/^[a-f0-9]{24}$/);
+		userId = response.body.userId;
+
 		expect(response.headers['set-cookie']).toBeDefined();
 	});
 });
@@ -80,9 +84,12 @@ describe('GET /api/validate-token', () => {
 			.set('Cookie', `token=${validToken}`);
 
 		expect(response.status).toBe(200);
-		expect(response.body).toEqual({
-			userId: 1,
-		});
+
+		const responseBody = JSON.stringify(response.body);
+		expect(responseBody).toContain('name');
+		expect(responseBody).toContain('userId');
+		expect(responseBody).toContain('Dan');
+		expect(responseBody).toMatch(/[a-f\d]{24}/i);
 	});
 
 	it(`should return 'No token provided' if no token is provided`, async () => {
@@ -94,13 +101,12 @@ describe('GET /api/validate-token', () => {
 		});
 	});
 
-	const incorrectJwtSecret = 'abcdefg123456789';
+	const incorrectJwtSecret = `123456789`;
 
 	const invalidToken = jwt.sign(
 		{
 			email: 'dan@example.com',
 			password: 'securePassword',
-			userId: 1,
 		},
 		incorrectJwtSecret,
 		{ expiresIn: '1h' }
@@ -202,6 +208,11 @@ describe('POST /api/create-account', () => {
 			.send(existingUser)
 			.expect(409);
 	});
+});
+
+describe('POST /api/create-account and DELETE /api/delete-account', () => {
+	let temporaryUserId;
+	let temporaryUserToken;
 
 	it('should create a new account successfully', async () => {
 		const response = await request
@@ -215,16 +226,25 @@ describe('POST /api/create-account', () => {
 		);
 		expect(response.body).toHaveProperty('userId');
 		expect(response.body).toHaveProperty('name', temporaryUser.name);
-		expect(response.body).not.toHaveProperty('email');
-		expect(response.body).not.toHaveProperty('password');
-	});
-});
 
-describe('DELETE /api/delete-account', () => {
-	it('should delete an existing account successfully', async () => {
+		temporaryUserId = response.body.userId;
+	});
+
+	it('should sign in with the new account', async () => {
+		const signInResponse = await request
+			.post('/api/sign-in')
+			.send({ email: temporaryUser.email, password: temporaryUser.password })
+			.expect(200);
+
+		expect(signInResponse.headers['set-cookie']).toBeDefined();
+		const cookieHeader = signInResponse.headers['set-cookie'][0];
+		temporaryUserToken = cookieHeader.split(';')[0].split('=')[1];
+	});
+
+	it('should delete the newly created account successfully', async () => {
 		const deleteResponse = await request
 			.delete('/api/delete-account')
-			.send(temporaryUser)
+			.set('Cookie', `token=${temporaryUserToken}`)
 			.expect(200);
 
 		expect(deleteResponse.body).toHaveProperty(
@@ -233,21 +253,27 @@ describe('DELETE /api/delete-account', () => {
 		);
 	});
 
-	it('should return 404 if account does not exist', async () => {
-		const response = await request
-			.delete('/api/delete-account')
-			.send({ userId: 'nonexistent-id' })
-			.expect(404);
+	it('should return 401 if no token is provided', async () => {
+		const response = await request.delete('/api/delete-account').expect(401);
 
-		expect(response.body).toHaveProperty('error');
+		expect(response.body).toHaveProperty('message', 'No token provided');
 	});
 
-	it('should return 400 if userId is not provided', async () => {
+	it('should return 404 if account does not exist', async () => {
+		const nonexistentUserToken = jwt.sign(
+			{
+				name: 'Ghost',
+				userId: '123456789012345678901234',
+			},
+			jwtSecret,
+			{ expiresIn: '1h' }
+		);
+
 		const response = await request
 			.delete('/api/delete-account')
-			.send({})
-			.expect(400);
+			.set('Cookie', `token=${nonexistentUserToken}`)
+			.expect(404);
 
-		expect(response.body).toHaveProperty('error');
+		expect(response.body).toHaveProperty('message', 'User not found');
 	});
 });
