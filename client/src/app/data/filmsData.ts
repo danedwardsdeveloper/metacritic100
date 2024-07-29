@@ -1010,3 +1010,18 @@ export const filmsData: Film[] = [
 		rank: 100,
 	},
 ];
+
+interface FilmRecord {
+	filmId: string;
+	seen: boolean;
+}
+
+function createSeenFilmsArray(films: Film[]): FilmRecord[] {
+	return films.map((film) => ({
+		filmId: film.filmId,
+		seen: false,
+	}));
+}
+
+const emptyFilmsArray = createSeenFilmsArray(filmsData);
+console.log(JSON.stringify(emptyFilmsArray, null, 2));
