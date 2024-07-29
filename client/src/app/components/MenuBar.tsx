@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
 	CloseButton,
@@ -8,31 +7,26 @@ import {
 } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 
-import { useAuth } from '../contexts/AuthContext';
+import { useUser } from '../contexts/UserContext.tsx';
 
 function classNames(...classes: string[]): string {
 	return classes.filter(Boolean).join(' ');
 }
 
 export default function MenuBar() {
-	const { isAuthenticated } = useAuth();
-	const [authState, setAuthState] = useState(isAuthenticated);
-
-	useEffect(() => {
-		setAuthState(isAuthenticated);
-	}, [isAuthenticated]);
+	const { isAuthenticated } = useUser();
 
 	const navigation = [
 		{ name: 'Home', to: '/' },
 		{ name: 'Protected', to: '/protected', disabled: !isAuthenticated },
 		{
-			name: authState ? 'Sign out' : 'Sign in',
-			to: authState ? '/sign-out' : '/sign-in',
+			name: isAuthenticated ? 'Sign out' : 'Sign in',
+			to: isAuthenticated ? '/sign-out' : '/sign-in',
 		},
 	];
 
 	return (
-		<Disclosure as="nav" className="bg-gray-800">
+		<Disclosure as="nav" className="bg-gray-800 sticky top-0 z-50 shadow-md">
 			<div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
 				<div className="relative flex h-16 items-center justify-between">
 					<div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -61,7 +55,7 @@ export default function MenuBar() {
 							</NavLink>
 						</div>
 						<div className="hidden sm:ml-6 sm:block">
-							{/*Main menu*/}
+							{/*Main Navigation - Desktop*/}
 							<div className="flex space-x-4">
 								{navigation.map((item) => (
 									<CloseButton
@@ -93,6 +87,7 @@ export default function MenuBar() {
 				</div>
 			</div>
 
+			{/*Main Navigation - Mobile*/}
 			<div className="overflow-hidden">
 				<DisclosurePanel
 					className="sm:hidden origin-top transition duration-200 ease-out data-[closed]:-translate-y-6 data-[closed]:opacity-0"
