@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction, CookieOptions } from 'express';
 
 import { expressEnv, jwtSecret } from '../../../utils/environmentChecks.js';
-import { AuthenticatedRequest } from 'server/app/modelsTypes/types.js';
+import { AuthenticatedRequest } from '../../models/AuthenticatedRequest.js';
 
 interface CustomRequest extends Request {
 	userId?: string;
@@ -44,11 +44,13 @@ export function validateToken(
 	}
 
 	try {
-		const decoded = jwt.verify(token, jwtSecret) as jwt.JwtPayload;
+		const decoded = jwt.verify(token, jwtSecret) as jwt.JwtPayload & {
+			userId: string;
+			name: string;
+		};
 		req.user = {
 			userId: decoded.userId,
 			name: decoded.name,
-			...decoded,
 		};
 		next();
 	} catch (error) {
