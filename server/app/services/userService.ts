@@ -1,42 +1,50 @@
-import { User, IUserFilm } from '../models/User.js';
-import { Film, IFilm } from '../models/Film.js';
+import User from '../models/User.js';
 
 export async function updateUserFilm(
 	userId: string,
 	filmId: string,
-	seen: boolean,
-	notes: string
-): Promise<void> {
-	await User.updateOne(
-		{ userId, 'films.filmId': filmId },
-		{
-			$set: {
-				'films.$.seen': seen,
-				'films.$.notes': notes,
-			},
+	seen: boolean
+): Promise<{ success: boolean; newStatus?: boolean; message?: string }> {
+	try {
+		const user = await User.findOne({ _id: userId, 'films.filmId': filmId });
+
+		if (!user) {
+			return { success: false, message: 'User or film not found' };
 		}
-	);
-}
 
-export async function getUserFilms(
-	userId: string
-): Promise<(IFilm & IUserFilm)[]> {
-	const user = await User.findOne({ userId });
-	if (!user) throw new Error('User not found');
+		const film = user.films.find((f) => f.filmId === filmId);
 
-	const filmIds = user.films.map((f) => f.filmId);
-	const films = await Film.find({ filmId: { $in: filmIds } });
+		if (!film) {
+			return { success: false, message: "Film not found in user's list" };
+		}
 
-	return user.films.map((userFilm) => {
-		const filmDetails = films.find((f) => f.filmId === userFilm.filmId);
-		if (!filmDetails)
-			throw new Error(
-				`Film details not found for filmId: ${userFilm.filmId}`
-			);
-		return {
-			...(filmDetails.toObject() as IFilm),
-			seen: userFilm.seen,
-			notes: userFilm.notes,
-		} as IFilm & IUserFilm;
-	});
+		if (film.seen === seen) {
+			return {
+				success: true,
+				newStatus: seen,
+				message: 'Film status unchanged',
+			};
+		}
+
+		const result = await User.updateOne(
+			{ _id: userId, 'films.filmId': filmId },
+			{
+				$set: {
+					'films.$.seen': seen,
+				},
+			}
+		);
+
+		if (result.modifiedCount === 1) {
+			return {
+				success: true,
+				newStatus: seen,
+				message: 'Film status updated',
+			};
+		} else {
+			return { success: false, message: 'Update operation failed' };
+		}
+	} catch (error) {
+		return { success: false, message: 'Internal server error' };
+	}
 }
