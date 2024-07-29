@@ -5,9 +5,8 @@ import {
 	validateToken,
 	clearToken,
 } from '../middleware/components/authTokens.js';
-import { syncUserFilms, toggleFilm } from '../services/filmService.js';
-import { updateUserFilm, getUserFilms } from '../services/userService';
-import { User } from '../models/User.js';
+import { updateUserFilm } from '../services/userService';
+import User from '../models/User.js';
 import { AuthenticatedRequest } from '../models/AuthenticatedRequest.js';
 
 const protectedRouter = express.Router();
@@ -24,48 +23,39 @@ protectedRouter.get(
 	}
 );
 
-protectedRouter.get(
-	'/all',
-	async (req: AuthenticatedRequest, res: Response) => {
-		try {
-			const userId = req.user?.userId;
-
-			if (!userId) {
-				return res.status(400).json({ error: 'User ID is required' });
-			}
-
-			const userFilms = await getUserFilms(userId);
-			res.json(userFilms);
-		} catch (error) {
-			console.error('Error fetching user films:', error);
-			res.status(500).json({ error: 'Internal server error' });
-		}
-	}
-);
-
 protectedRouter.post(
 	'/toggle-film',
 	async (req: AuthenticatedRequest, res: Response) => {
 		try {
 			const userId = req.user?.userId;
-			console.log(`User ID: ${userId}`);
-			const { filmId } = req.body;
+			const { filmId, seen } = req.body;
 
 			if (!userId) {
 				return res.status(401).json({ error: 'User not authenticated' });
 			}
 
-			if (typeof filmId !== 'string') {
-				return res.status(400).json({ error: 'Invalid request body' });
+			if (typeof filmId !== 'string' || filmId.trim() === '') {
+				return res.status(400).json({ error: 'Invalid or missing filmId' });
 			}
 
-			await toggleFilm(userId, filmId);
+			if (typeof seen !== 'boolean') {
+				return res
+					.status(400)
+					.json({ error: 'Invalid or missing seen status' });
+			}
 
-			res.status(200).json({
-				message: 'Film seen status toggled successfully',
-			});
+			const result = await updateUserFilm(userId, filmId, seen);
+
+			if (result.success) {
+				res.status(200).json({
+					message: result.message,
+					filmId: filmId,
+					newStatus: result.newStatus,
+				});
+			} else {
+				res.status(404).json({ error: result.message });
+			}
 		} catch (error) {
-			console.error('Error toggling film seen status:', error);
 			res.status(500).json({ error: 'Internal server error' });
 		}
 	}
