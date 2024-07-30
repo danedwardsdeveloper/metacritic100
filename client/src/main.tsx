@@ -9,21 +9,20 @@ import {
 
 import App from './App';
 import FilmsList from './app/components/FilmsList';
-import Protected from './app/components/Protected';
+import About from './app/components/About';
 import SignIn from './app/components/SignIn';
 import SignOut from './app/components/SignOut';
 import ErrorElement from './app/components/ErrorElement';
 
 import './index.tailwind.css';
 
-import { AuthProvider } from './app/contexts/AuthContext';
-import { FilmsProvider } from './app/contexts/FilmsContext';
+import { UserProvider } from './app/contexts/UserContext';
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
 		<Route path="/" element={<App />} errorElement={<ErrorElement />}>
 			<Route index element={<FilmsList />} />
-			<Route path="protected" element={<Protected />} />
+			<Route path="about" element={<About />} />
 			<Route path="sign-in" element={<SignIn />} />
 			<Route path="sign-out" element={<SignOut />} />
 			<Route path="*" element={<ErrorElement />} />
@@ -33,10 +32,8 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById('root')! as HTMLElement).render(
 	<React.StrictMode>
-		<AuthProvider>
-			<FilmsProvider>
-				<RouterProvider router={router} />
-			</FilmsProvider>
-		</AuthProvider>
+		<UserProvider>
+			<RouterProvider router={router} />
+		</UserProvider>
 	</React.StrictMode>
 );
