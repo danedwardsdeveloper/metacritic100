@@ -8,6 +8,7 @@
 		"dev": "concurrently  \"nodemon --quiet --config nodemon.server.json\" \"pnpm --prefix client run dev\"",
 		"test": "vitest test/server",
 		"build": "tsc -p tsconfig.json && cd client && pnpm run build && cd .. && docker build -t metacritic100 . && docker run -p 3000:3000 --env-file .env -e EXPRESS_ENV=build --rm --name express-react-container metacritic100",
+		"docker": "tsc -p tsconfig.json && cd client && pnpm run build && cd .. && docker build -t metacritic-monorepo . && docker run -p 3000:3000 --env-file .env -e EXPRESS_ENV=build --rm --name metacritic-monorepo-container metacritic-monorepo",
 		"deploy": "cd ops && node checkVariables && cd .. && tsc -p tsconfig.json && cd client && pnpm run build:production && cd .. && fly deploy $(grep -v '^#' .env | xargs -I {} echo '-e {}')"
 	},
 	"author": "Dan Edwards",
