@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useAuth } from '../contexts/AuthContext';
-import { signIn } from '../services/AuthService';
+import { useUser } from '../contexts/UserContext.tsx';
+import { signInService } from '../services/UserService.ts';
 
 export default function SignIn() {
 	const [email, setEmail] = useState('dan@gmail.com');
@@ -10,19 +10,19 @@ export default function SignIn() {
 	const [errorMessage, setErrorMessage] = useState('');
 
 	const navigate = useNavigate();
-	const { setIsAuthenticated } = useAuth();
+	const { setIsAuthenticated } = useUser();
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setErrorMessage('');
 		try {
-			const result = await signIn(email, password);
+			const result = await signInService(email, password);
 			if (result && result.userId) {
 				console.log('Sign in successful');
 				console.log('User ID:', result.userId);
 				console.log('Message:', result.message);
 				setIsAuthenticated(true);
-				navigate('/protected');
+				navigate('/');
 			} else {
 				setErrorMessage(result?.message || 'Sorry, something went wrong.');
 			}
@@ -34,11 +34,11 @@ export default function SignIn() {
 
 	return (
 		<>
-			<div className="flex min-h-full flex-1 flex-col justify-center bg-white px-6 py-12 lg:px-8">
+			<div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
 				<div className="sm:mx-auto sm:w-full sm:max-w-sm">
 					<img
-						alt="Your Company"
-						src="/react.svg"
+						alt="MetaCritic 100"
+						src="/filmStrip.svg"
 						className="mx-auto h-10 w-auto"
 					/>
 					<h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
