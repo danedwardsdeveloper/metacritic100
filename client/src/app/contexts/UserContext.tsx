@@ -50,7 +50,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [userId, setUserId] = useState('');
 	const [name, setName] = useState('');
-	const [userInitial, setUserInitial] = useState('');
+	const [userInitial, setUserInitial] = useState('?');
 	const [films, setFilms] = useState<Record<string, boolean>>(defaultFilms);
 	const [totalFilms, setTotalFilms] = useState(0);
 
