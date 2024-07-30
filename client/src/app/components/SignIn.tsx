@@ -5,8 +5,8 @@ import { useUser } from '../contexts/UserContext.tsx';
 import { signInService } from '../services/UserService.ts';
 
 export default function SignIn() {
-	const [email, setEmail] = useState('dan@gmail.com');
-	const [password, setPassword] = useState('securePassword');
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
 	const [errorMessage, setErrorMessage] = useState('');
 
 	const navigate = useNavigate();
