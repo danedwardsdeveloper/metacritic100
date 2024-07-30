@@ -7,17 +7,18 @@ export interface Film {
 	seen: boolean;
 }
 
-interface TokenValidationResponse {
-	message: string;
-	name: string;
-	userId: string;
-	films: Film[];
-}
-
 interface ToggleFilmResponse {
 	message: string;
 	filmId: string;
 	newStatus: boolean;
+}
+
+interface TokenValidationResponse {
+	message: string;
+	initial: string;
+	userId: string;
+	filmsSeen: number;
+	films: Film[];
 }
 
 export const validateTokenService = async (
@@ -34,6 +35,9 @@ export const validateTokenService = async (
 		return response.data;
 	} catch (error) {
 		console.error('Error validating token:', error);
+		if (axios.isAxiosError(error)) {
+			console.error('Response:', error.response?.data);
+		}
 		return null;
 	}
 };
@@ -41,6 +45,7 @@ export const validateTokenService = async (
 interface SignInResponse {
 	message: string;
 	userId?: number;
+	initial?: string;
 }
 
 export const signInService = async (
