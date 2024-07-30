@@ -10,7 +10,7 @@ export default function SignIn() {
 	const [errorMessage, setErrorMessage] = useState('');
 
 	const navigate = useNavigate();
-	const { setIsAuthenticated } = useUser();
+	const { setIsAuthenticated, setInitial, syncWithDatabase } = useUser();
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -22,6 +22,8 @@ export default function SignIn() {
 				console.log('User ID:', result.userId);
 				console.log('Message:', result.message);
 				setIsAuthenticated(true);
+				setInitial(result.initial || '');
+				await syncWithDatabase();
 				navigate('/');
 			} else {
 				setErrorMessage(result?.message || 'Sorry, something went wrong.');
