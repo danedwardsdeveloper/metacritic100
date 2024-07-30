@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 
-import User, { IUser } from '../models/User.js';
+import User from '../models/User.js';
 import { AuthenticatedRequest } from '../models/AuthenticatedRequest.js';
 import {
 	generateToken,
@@ -15,45 +15,45 @@ publicRouter.get('/', (req: Request, res: Response) => {
 	res.json({ message: 'MetaCritic100 API' });
 });
 
-publicRouter.post(
-	'/create-account',
-	async (req: Request, res: Response, next: NextFunction) => {
-		const { name, email, password } = req.body;
+// publicRouter.post(
+// 	'/create-account',
+// 	async (req: Request, res: Response, next: NextFunction) => {
+// 		const { name, email, password } = req.body;
 
-		if (!name || !email || !password) {
-			return res.status(400).json({ message: 'Missing required fields' });
-		}
+// 		if (!name || !email || !password) {
+// 			return res.status(400).json({ message: 'Missing required fields' });
+// 		}
 
-		try {
-			const existingUser = await User.findOne({ email });
-			if (existingUser) {
-				return res.status(409).json({ message: 'User already exists' });
-			}
+// 		try {
+// 			const existingUser = await User.findOne({ email });
+// 			if (existingUser) {
+// 				return res.status(409).json({ message: 'User already exists' });
+// 			}
 
-			const hashedPassword = await bcrypt.hash(password, 10);
+// 			const hashedPassword = await bcrypt.hash(password, 10);
 
-			const newUser = new User({
-				name,
-				email,
-				password: hashedPassword,
-				films: [],
-			});
+// 			const newUser = new User({
+// 				name,
+// 				email,
+// 				password: hashedPassword,
+// 				films: [],
+// 			});
 
-			await newUser.save();
+// 			await newUser.save();
 
-			const token = generateToken(newUser._id, newUser.name);
-			setToken(res, token);
+// 			const token = generateToken(newUser._id, newUser.name);
+// 			setToken(res, token);
 
-			res.status(201).json({
-				name: newUser.name,
-				_id: newUser._id,
-				message: 'User created successfully',
-			});
-		} catch (error) {
-			next(error);
-		}
-	}
-);
+// 			res.status(201).json({
+// 				name: newUser.name,
+// 				_id: newUser._id,
+// 				message: 'User created successfully',
+// 			});
+// 		} catch (error) {
+// 			next(error);
+// 		}
+// 	}
+// );
 
 // Removes unnecessary MongoDB '_id' and 'id' keys from films array
 function cleanFilmObject(film: any) {
@@ -119,17 +119,55 @@ publicRouter.post('/sign-in', async (req: Request, res: Response) => {
 	}
 });
 
-publicRouter.get(
+publicRouter.post(
 	'/validate-token',
 	validateToken,
-	(req: AuthenticatedRequest, res: Response) => {
-		const name = req.user?.name ?? null;
-		const _id = req.user?._id ?? null;
+	async (req: AuthenticatedRequest, res: Response) => {
+		const userId = req.user?.userId;
+		const name = req.user?.name;
+		const { films } = req.body;
 
-		if (name && _id) {
-			res.status(200).json({ name, _id });
-		} else {
-			res.status(401).json({ message: 'User not authenticated' });
+		if (!userId || !name) {
+			return res.status(401).json({ message: 'User not authenticated' });
+		}
+
+		try {
+			const user = await User.findById(userId);
+
+			if (!user) {
+				return res.status(404).json({ message: 'User not found' });
+			}
+
+			if (Array.isArray(films)) {
+				films.forEach((clientFilm) => {
+					if (clientFilm.seen) {
+						const dbFilm = user.films.find(
+							(f) => f.filmId === clientFilm.filmId
+						);
+						if (dbFilm) {
+							dbFilm.seen = true;
+						} else {
+							user.films.push({ filmId: clientFilm.filmId, seen: true });
+						}
+					}
+				});
+
+				await user.save();
+			}
+
+			const cleanedFilms = user.films.map(cleanFilmObject);
+
+			res.json({
+				message: 'Token validated successfully',
+				name: user.name,
+				userId: user.userId,
+				films: cleanedFilms,
+			});
+		} catch (error) {
+			console.error('Token validation error:', error);
+			res.status(500).json({
+				message: 'An error occurred during token validation',
+			});
 		}
 	}
 );
