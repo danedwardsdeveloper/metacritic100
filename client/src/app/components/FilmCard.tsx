@@ -1,16 +1,17 @@
 import React from 'react';
-import { Film } from '../data/filmsData.ts';
-import { useFilms } from '../contexts/FilmsContext';
+import { Film } from '../data/filmsData';
+import { useUser } from '../contexts/UserContext.tsx';
 
 interface FilmCardProps {
 	film: Film;
+	seen: boolean;
 }
 
-export default ({ film }: FilmCardProps): React.ReactElement => {
-	const { seenFilms, toggleFilmSeen } = useFilms();
+const FilmCard: React.FC<FilmCardProps> = ({ film, seen }) => {
+	const { toggleFilm } = useUser();
 
 	const handleToggle = () => {
-		toggleFilmSeen(film.filmId);
+		toggleFilm(film.filmId);
 	};
 
 	return (
@@ -24,7 +25,7 @@ export default ({ film }: FilmCardProps): React.ReactElement => {
 					type="checkbox"
 					id={film.filmId}
 					className="bg-slate-100 hover:bg-slate-200 rounded-sm focus:ring-green-500 text-green-500 hover:text-green-600 h-5 w-5"
-					checked={seenFilms[film.filmId] || false}
+					checked={seen}
 					onChange={handleToggle}
 				/>
 				&nbsp; Seen
@@ -32,3 +33,5 @@ export default ({ film }: FilmCardProps): React.ReactElement => {
 		</div>
 	);
 };
+
+export default FilmCard;
