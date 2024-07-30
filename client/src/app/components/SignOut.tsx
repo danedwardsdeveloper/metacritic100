@@ -1,16 +1,16 @@
 import { useNavigate } from 'react-router-dom';
 
-import { useAuth } from '../contexts/AuthContext';
-import { signOut } from '../services/AuthService';
+import { useUser } from '../contexts/UserContext.tsx';
+import { signOutService } from '../services/UserService.ts';
 
 export default function SignOut() {
 	const navigate = useNavigate();
-	const { setIsAuthenticated } = useAuth();
+	const { resetUser } = useUser();
 
 	const handleSignOut = async () => {
 		try {
-			await signOut();
-			setIsAuthenticated(false);
+			await signOutService();
+			resetUser();
 			navigate('/sign-in');
 		} catch (error) {
 			console.error('Error signing out:', error);
@@ -19,11 +19,11 @@ export default function SignOut() {
 
 	return (
 		<>
-			<div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 bg-white">
+			<div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 ">
 				<div className="sm:mx-auto sm:w-full sm:max-w-sm">
 					<img
-						alt="Your Company"
-						src="/react.svg"
+						alt="MetaCritic 100"
+						src="/filmStrip.svg"
 						className="mx-auto h-10 w-auto"
 					/>
 				</div>
