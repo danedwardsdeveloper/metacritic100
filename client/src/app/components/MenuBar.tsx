@@ -9,7 +9,11 @@ import {
 	MenuItem,
 	MenuItems,
 } from '@headlessui/react';
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import {
+	Bars3Icon,
+	XMarkIcon,
+	UserCircleIcon,
+} from '@heroicons/react/24/outline';
 
 import { useUser } from '../contexts/UserContext.tsx';
 
@@ -19,7 +23,7 @@ function classNames(...classes: string[]): string {
 }
 
 export default function MenuBar() {
-	const { isAuthenticated, totalFilms } = useUser();
+	const { isAuthenticated, totalFilms, userInitial } = useUser();
 
 	const mainMenu = [
 		{ name: 'Home', to: '/' },
@@ -102,11 +106,16 @@ export default function MenuBar() {
 											<span className="sr-only">
 												Open profile menu
 											</span>
-											<img
-												className="h-8 w-8 rounded-full"
-												src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-												alt=""
-											/>
+											{isAuthenticated ? (
+												<UserCircleIcon
+													className="block h-6 w-6 text-white"
+													aria-hidden="true"
+												/>
+											) : (
+												<p className="text-white font-medium">
+													{userInitial}
+												</p>
+											)}
 										</MenuButton>
 									</div>
 									<MenuItems
