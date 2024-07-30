@@ -31,15 +31,16 @@ export default function About() {
 						favorable reviews.
 					</p>
 
-					<p className="mt-6 text-lg leading-8 text-gray-600">
-						MetaCritic 100 takes inspiration from this system, focusing
-						specifically on the highest-rated films. While not officially
-						connected to Metacritic, this project showcases a unique
-						intersection of technology and cinema appreciation. It
-						combines web development skills with a passion for film,
-						creating a platform where movie buffs can challenge themselves
-						to watch and keep track of some of the most critically
-						acclaimed films of all time.
+					<p className="mt-6 text-base leading-8 text-gray-600">
+						Site by{' '}
+						<a
+							href="https://danedwardsdeveloper.com/"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="text-indigo-500 underline underline-offset-2 decoration-indigo-300 hover:text-indigo-600 hover:decoration-indigo-500 transition duration-200"
+						>
+							Dan Edwards
+						</a>
 					</p>
 				</div>
 			</div>
