@@ -22,7 +22,7 @@ function cleanTailwindClassNames(...classes: string[]): string {
 }
 
 export default function MenuBar() {
-	const { isAuthenticated, totalFilms, userInitial } = useUser();
+	const { isAuthenticated, filmsSeen, initial } = useUser();
 
 	const mainMenu = [
 		{ name: 'Home', to: '/' },
@@ -92,7 +92,7 @@ export default function MenuBar() {
 							{/* Film Count */}
 							<div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-center">
 								<div className="text-white">
-									<span>{totalFilms}</span>
+									<span>{filmsSeen}</span>
 									<span className="text-slate-300"> / 100</span>
 								</div>
 							</div>
@@ -106,14 +106,14 @@ export default function MenuBar() {
 												Open profile menu
 											</span>
 											{isAuthenticated ? (
+												<p className="text-white text-xl">
+													{initial}
+												</p>
+											) : (
 												<UserCircleIcon
 													className="block h-6 w-6 text-white"
 													aria-hidden="true"
 												/>
-											) : (
-												<p className="text-white font-medium">
-													Initial: {userInitial}
-												</p>
 											)}
 										</MenuButton>
 									</div>
