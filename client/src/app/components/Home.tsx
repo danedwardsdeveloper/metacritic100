@@ -1,10 +1,10 @@
-import Header from './Header';
+// import Header from './Header';
 import FilmGrid from './FilmGrid';
 
 function Home() {
 	return (
 		<>
-			<Header />
+			{/* <Header /> */}
 			<FilmGrid />
 		</>
 	);
