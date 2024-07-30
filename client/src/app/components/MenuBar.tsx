@@ -29,12 +29,23 @@ export default function MenuBar() {
 		{ name: 'About', to: '/about' },
 	];
 
-	const profileMenu = [
-		{
-			name: isAuthenticated ? 'Sign out' : 'Sign in',
-			to: isAuthenticated ? '/sign-out' : '/sign-in',
-		},
-	];
+	const profileMenu = isAuthenticated
+		? [
+				{
+					name: 'Sign out',
+					to: '/sign-out',
+				},
+		  ]
+		: [
+				{
+					name: 'Create account',
+					to: '/create-account',
+				},
+				{
+					name: 'Sign in',
+					to: '/sign-in',
+				},
+		  ];
 
 	return (
 		<Disclosure as="nav" className="bg-gray-800 sticky top-0 z-50 shadow-md">
