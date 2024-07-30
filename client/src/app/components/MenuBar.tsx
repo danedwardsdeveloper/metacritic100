@@ -112,7 +112,7 @@ export default function MenuBar() {
 												/>
 											) : (
 												<p className="text-white font-medium">
-													{userInitial}
+													Initial: {userInitial}
 												</p>
 											)}
 										</MenuButton>
