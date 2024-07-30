@@ -42,6 +42,40 @@ export const validateTokenService = async (
 	}
 };
 
+interface CreateAccountResponse {
+	message: string;
+	userId?: string;
+	initial?: string;
+}
+
+export const createAccountService = async (
+	name: string,
+	email: string,
+	password: string,
+	films: Film[]
+): Promise<CreateAccountResponse> => {
+	try {
+		const response = await axios.post<CreateAccountResponse>(
+			`${currentApiBase}/create-account`,
+			{ name, email, password, films },
+			{
+				withCredentials: true,
+			}
+		);
+		return response.data;
+	} catch (error) {
+		if (axios.isAxiosError(error)) {
+			const axiosError = error as AxiosError<CreateAccountResponse>;
+			if (axiosError.response) {
+				return { message: axiosError.response.data.message };
+			}
+		}
+		return {
+			message: 'An unexpected error occurred. Please try again later.',
+		};
+	}
+};
+
 interface SignInResponse {
 	message: string;
 	userId?: number;
