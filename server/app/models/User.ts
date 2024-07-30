@@ -19,9 +19,9 @@ export interface IUserDocument extends Document, IUser {}
 const UserSchema = new Schema<IUserDocument>(
 	{
 		name: { type: String, required: true },
-		email: { type: String, required: true, unique: true },
+		email: { type: String, required: true, unique: true, index: true },
 		password: { type: String, required: true },
-		filmsSeen: { type: Number, default: 0 },
+		filmsSeen: { type: Number, default: 0, min: 0 },
 		films: [
 			{
 				filmId: { type: String, required: true },
