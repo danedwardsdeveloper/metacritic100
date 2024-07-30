@@ -25,7 +25,7 @@ export default function MenuBar() {
 	const { isAuthenticated, filmsSeen, initial } = useUser();
 
 	const mainMenu = [
-		{ name: 'Home', to: '/' },
+		{ name: 'MetaCritic 100', to: '/' },
 		{ name: 'About', to: '/about' },
 	];
 
