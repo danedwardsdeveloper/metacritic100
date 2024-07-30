@@ -15,7 +15,7 @@ const FilmCard: React.FC<FilmCardProps> = ({ film, seen }) => {
 	};
 
 	return (
-		<div className="bg-slate-300 rounded-md m-4 p-5">
+		<div className=" rounded-lg bg-slate-50 shadow p-5 col-span-1">
 			<h3 className="font-bold">{film.title}</h3>
 			<p>{film.year}</p>
 			<p>{film.language}</p>

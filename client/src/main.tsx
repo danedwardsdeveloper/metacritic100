@@ -8,8 +8,9 @@ import {
 } from 'react-router-dom';
 
 import App from './App';
-import FilmsList from './app/components/FilmsList';
+import Home from './app/components/Home';
 import About from './app/components/About';
+import CreateAccount from './app/components/CreateAccount';
 import SignIn from './app/components/SignIn';
 import SignOut from './app/components/SignOut';
 import ErrorElement from './app/components/ErrorElement';
@@ -21,8 +22,9 @@ import { UserProvider } from './app/contexts/UserContext';
 const router = createBrowserRouter(
 	createRoutesFromElements(
 		<Route path="/" element={<App />} errorElement={<ErrorElement />}>
-			<Route index element={<FilmsList />} />
+			<Route index element={<Home />} />
 			<Route path="about" element={<About />} />
+			<Route path="create-account" element={<CreateAccount />} />
 			<Route path="sign-in" element={<SignIn />} />
 			<Route path="sign-out" element={<SignOut />} />
 			<Route path="*" element={<ErrorElement />} />
