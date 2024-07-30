@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 import { useUser } from '../contexts/UserContext.tsx';
 import { signInService } from '../services/UserService.ts';
@@ -111,15 +111,15 @@ export default function SignIn() {
 						</div>
 					</form>
 
-					{/* <p className="mt-10 text-center text-sm text-gray-500">
-						Not a member?{' '}
-						<a
-							href="#"
+					<p className="mt-10 text-center text-sm text-gray-500">
+						Don't have an account?{' '}
+						<Link
+							to={`/create-account`}
 							className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
 						>
-							Start a 14 day free trial
-						</a>
-					</p> */}
+							Create an account
+						</Link>
+					</p>
 				</div>
 			</div>
 		</>
