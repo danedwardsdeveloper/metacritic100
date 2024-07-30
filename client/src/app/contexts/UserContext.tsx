@@ -17,15 +17,14 @@ interface UserContextType {
 	isLoading: boolean;
 	isAuthenticated: boolean;
 	userId: string;
-	name: string;
-	userInitial: string;
+	initial: string;
 	films: Record<string, boolean>;
-	totalFilms: number;
+	filmsSeen: number;
+	syncWithDatabase: () => void;
 	setIsAuthenticated: (value: boolean) => void;
-	setName: (name: string) => void;
+	setInitial: (name: string) => void;
 	setUserId: (userId: string) => void;
 	toggleFilm: (filmId: string) => void;
-	syncWithDatabase: () => Promise<void>;
 	resetUser: () => void;
 }
 
@@ -39,72 +38,40 @@ const calculateTotalFilms = (films: Record<string, boolean>): number => {
 	return Object.values(films).filter(Boolean).length;
 };
 
-const getUserInitial = (name: string): string => {
-	return name ? name.charAt(0).toUpperCase() : '';
-};
-
 export const UserProvider: React.FC<{ children: ReactNode }> = ({
 	children,
 }) => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [userId, setUserId] = useState('');
-	const [name, setName] = useState('');
-	const [userInitial, setUserInitial] = useState('?');
+	const [initial, setInitial] = useState('?');
 	const [films, setFilms] = useState<Record<string, boolean>>(defaultFilms);
-	const [totalFilms, setTotalFilms] = useState(0);
+	const [filmsSeen, setFilmsSeen] = useState(0);
 
 	useEffect(() => {
 		const initializeUser = async () => {
 			setIsLoading(true);
 			try {
-				const storedUser = localStorage.getItem('user');
-				if (storedUser) {
-					const { name, userId, films } = JSON.parse(storedUser);
-					setName(name);
-					setUserId(userId);
-					setFilms(films);
-					setUserInitial(getUserInitial(name));
-				} else {
-					localStorage.setItem(
-						'user',
-						JSON.stringify({ name: '', userId: '', films: defaultFilms })
+				const filmsArray: Film[] = Object.entries(films).map(
+					([filmId, seen]) => ({ filmId, seen })
+				);
+				const validationResult = await validateTokenService(filmsArray);
+
+				if (validationResult) {
+					setIsAuthenticated(true);
+					setInitial(validationResult.initial);
+					setUserId(validationResult.userId);
+
+					const mergedFilms = Object.fromEntries(
+						validationResult.films.map((film) => [
+							film.filmId,
+							films[film.filmId] || film.seen,
+						])
 					);
-				}
 
-				const hasToken = document.cookie
-					.split(';')
-					.some((item) => item.trim().startsWith('token='));
-
-				if (hasToken) {
-					const filmsArray: Film[] = Object.entries(films).map(
-						([filmId, seen]) => ({ filmId, seen })
-					);
-					const validationResult = await validateTokenService(filmsArray);
-
-					if (validationResult) {
-						setIsAuthenticated(true);
-						setName(validationResult.name);
-						setUserId(validationResult.userId);
-						setUserInitial(getUserInitial(validationResult.name));
-
-						const mergedFilms = Object.fromEntries(
-							validationResult.films.map((film) => [
-								film.filmId,
-								films[film.filmId] || film.seen,
-							])
-						);
-
-						setFilms(mergedFilms);
-						updateLocalStorage(
-							validationResult.name,
-							validationResult.userId,
-							mergedFilms
-						);
-					} else {
-						setIsAuthenticated(false);
-					}
+					setFilms(mergedFilms);
 				} else {
+					console.log('Token validation failed');
 					setIsAuthenticated(false);
 				}
 			} catch (error) {
@@ -119,7 +86,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 	}, []);
 
 	useEffect(() => {
-		setTotalFilms(calculateTotalFilms(films));
+		setFilmsSeen(calculateTotalFilms(films));
 	}, [films]);
 
 	const toggleFilm = async (filmId: string) => {
@@ -127,8 +94,8 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 
 		setFilms((prev) => {
 			const updated = { ...prev, [filmId]: !currentStatus };
-			updateLocalStorage(name, userId, updated);
-			setTotalFilms(calculateTotalFilms(updated));
+			updateLocalStorage(initial, userId, updated);
+			setFilmsSeen(calculateTotalFilms(updated));
 			return updated;
 		});
 
@@ -137,36 +104,17 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 			if (result) {
 				setFilms((prev) => {
 					const updated = { ...prev, [filmId]: result.newStatus };
-					updateLocalStorage(name, userId, updated);
+					updateLocalStorage(initial, userId, updated);
 					return updated;
 				});
 			} else {
 				console.error('Failed to toggle film on server');
 				setFilms((prev) => {
 					const updated = { ...prev, [filmId]: currentStatus };
-					updateLocalStorage(name, userId, updated);
+					updateLocalStorage(initial, userId, updated);
 					return updated;
 				});
 			}
-		}
-	};
-
-	const syncWithDatabase = async () => {
-		try {
-			const filmsArray: Film[] = Object.entries(films).map(
-				([filmId, seen]) => ({ filmId, seen })
-			);
-			const validationResult = await validateTokenService(filmsArray);
-			if (validationResult) {
-				const updatedFilms = Object.fromEntries(
-					validationResult.films.map((film) => [film.filmId, film.seen])
-				);
-				setFilms(updatedFilms);
-				setTotalFilms(calculateTotalFilms(updatedFilms));
-				updateLocalStorage(name, userId, updatedFilms);
-			}
-		} catch (error) {
-			console.error('Error syncing with database:', error);
 		}
 	};
 
@@ -178,18 +126,34 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 		localStorage.setItem('user', JSON.stringify({ name, userId, films }));
 	};
 
-	const setNameAndInitial = (newName: string) => {
-		setName(newName);
-		setUserInitial(getUserInitial(newName));
+	const syncWithDatabase = async () => {
+		try {
+			const filmsArray: Film[] = Object.entries(films).map(
+				([filmId, seen]) => ({ filmId, seen })
+			);
+			const validationResult = await validateTokenService(filmsArray);
+			if (validationResult) {
+				setIsAuthenticated(true);
+				setInitial(validationResult.initial);
+				setUserId(validationResult.userId);
+
+				const updatedFilms = Object.fromEntries(
+					validationResult.films.map((film) => [film.filmId, film.seen])
+				);
+				setFilms(updatedFilms);
+				setFilmsSeen(calculateTotalFilms(updatedFilms));
+			}
+		} catch (error) {
+			console.error('Error syncing with database:', error);
+		}
 	};
 
 	const resetUser = () => {
 		setIsAuthenticated(false);
-		setName('');
 		setUserId('');
-		setUserInitial('');
+		setInitial('');
 		setFilms(defaultFilms);
-		setTotalFilms(0);
+		setFilmsSeen(0);
 		localStorage.setItem(
 			'user',
 			JSON.stringify({ name: '', userId: '', films: defaultFilms })
@@ -197,18 +161,17 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 	};
 
 	const value: UserContextType = {
-		isAuthenticated,
 		isLoading,
-		name,
-		films,
+		isAuthenticated,
 		userId,
-		totalFilms,
-		userInitial,
-		setUserId,
-		setIsAuthenticated,
-		setName: setNameAndInitial,
-		toggleFilm,
+		initial,
+		films,
+		filmsSeen,
 		syncWithDatabase,
+		setUserId,
+		setInitial,
+		setIsAuthenticated,
+		toggleFilm,
 		resetUser,
 	};
 
