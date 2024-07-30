@@ -9,7 +9,7 @@ import {
 	MenuItem,
 	MenuItems,
 } from '@headlessui/react';
-import { Bars3Icon, XMarkIcon, BellIcon } from '@heroicons/react/24/outline';
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 
 import { useUser } from '../contexts/UserContext.tsx';
 
@@ -19,10 +19,14 @@ function classNames(...classes: string[]): string {
 
 export default function MenuBar() {
 	const { isAuthenticated } = useUser();
+	const { totalFilms } = useUser();
 
-	const navigation = [
+	const mainMenu = [
 		{ name: 'Home', to: '/' },
-		{ name: 'Protected', to: '/protected', disabled: !isAuthenticated },
+		{ name: 'About', to: '/about' },
+	];
+
+	const profileMenu = [
 		{
 			name: isAuthenticated ? 'Sign out' : 'Sign in',
 			to: isAuthenticated ? '/sign-out' : '/sign-in',
@@ -48,20 +52,11 @@ export default function MenuBar() {
 							/>
 						</DisclosureButton>
 					</div>
-					<div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-						<div className="flex flex-shrink-0 items-center">
-							<NavLink to={'/'}>
-								<img
-									alt="Your Company"
-									src="/react.svg"
-									className="h-8 w-auto"
-								/>
-							</NavLink>
-						</div>
+					<div className="flex flex-1 items-center justify-between">
+						{/*Main Navigation - Desktop*/}
 						<div className="hidden sm:ml-6 sm:block">
-							{/*Main Navigation - Desktop*/}
 							<div className="flex space-x-4">
-								{navigation.map((item) => (
+								{mainMenu.map((item) => (
 									<CloseButton
 										key={item.name}
 										as={NavLink}
@@ -75,10 +70,7 @@ export default function MenuBar() {
 												isActive
 													? 'bg-gray-900 text-white'
 													: 'text-gray-300 hover:bg-gray-700 hover:text-white',
-												'block rounded-md px-3 py-2 text-base font-medium',
-												item.disabled
-													? 'pointer-events-none opacity-50'
-													: ''
+												'block rounded-md px-3 py-2 text-base font-medium'
 											)
 										}
 									>
@@ -87,94 +79,112 @@ export default function MenuBar() {
 								))}
 							</div>
 						</div>
-					</div>
-					{/* Notifications Menu */}
-					<div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-						<button
-							type="button"
-							className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-						>
-							<span className="absolute -inset-1.5" />
-							<span className="sr-only">View notifications</span>
-							<BellIcon aria-hidden="true" className="h-6 w-6" />
-						</button>
-
-						{/* Profile Menu */}
-						<Menu as="div" className="relative ml-3">
+						{/*Film Count*/}
+						<div className="flex flex-shrink-0 items-center">
 							<div>
-								<MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-									<span className="absolute -inset-1.5" />
-									<span className="sr-only">Open user menu</span>
-									<img
-										alt=""
-										src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-										className="h-8 w-8 rounded-full"
-									/>
-								</MenuButton>
+								<span className="text-white">{totalFilms}</span>
+								<span className="text-slate-300"> / 100</span>
 							</div>
-							<MenuItems
-								transition
-								className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
-							>
-								<MenuItem>
-									<a
-										href="#"
-										className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
-									>
-										Your Profile
-									</a>
-								</MenuItem>
-								<MenuItem>
-									<a
-										href="#"
-										className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
-									>
-										Settings
-									</a>
-								</MenuItem>
-								<MenuItem>
-									<a
-										href="#"
-										className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
-									>
-										Sign out
-									</a>
-								</MenuItem>
-							</MenuItems>
-						</Menu>
+						</div>
+						{/* Notifications Menu */}
+						<div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+							{/* Profile Menu */}
+							<Menu as="div" className="relative ml-3">
+								<div>
+									<MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+										<span className="absolute -inset-1.5" />
+										<span className="sr-only">Open user menu</span>
+										<img
+											alt=""
+											src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+											className="h-8 w-8 rounded-full"
+										/>
+									</MenuButton>
+								</div>
+								<MenuItems
+									transition
+									className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+								>
+									{profileMenu.map((item) => (
+										<MenuItem key={item.name}>
+											<NavLink
+												to={item.to}
+												className={({
+													isActive,
+												}: {
+													isActive: boolean;
+												}) =>
+													classNames(
+														isActive ? 'bg-gray-100' : '',
+														'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50'
+													)
+												}
+											>
+												{item.name}
+											</NavLink>
+										</MenuItem>
+									))}
+								</MenuItems>
+								{/* <MenuItems
+									transition
+									className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+								>
+									<MenuItem>
+										<a
+											href="#"
+											className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
+										>
+											Your Profile
+										</a>
+									</MenuItem>
+									<MenuItem>
+										<a
+											href="#"
+											className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
+										>
+											Settings
+										</a>
+									</MenuItem>
+									<MenuItem>
+										<a
+											href="#"
+											className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
+										>
+											Sign out
+										</a>
+									</MenuItem>
+								</MenuItems> */}
+							</Menu>
+						</div>
 					</div>
 				</div>
-			</div>
-
-			{/*Main Navigation - Mobile*/}
-			<div className="overflow-hidden">
-				<DisclosurePanel
-					className="sm:hidden origin-top transition duration-200 ease-out data-[closed]:-translate-y-6 data-[closed]:opacity-0"
-					transition
-				>
-					<div className="space-y-1 px-2 pb-3 pt-2">
-						{navigation.map((item) => (
-							<CloseButton
-								key={item.name}
-								as={NavLink}
-								to={item.to}
-								className={({ isActive }: { isActive: boolean }) =>
-									classNames(
-										isActive
-											? 'bg-gray-900 text-white'
-											: 'text-gray-300 hover:bg-gray-700 hover:text-white',
-										'block rounded-md px-3 py-2 text-base font-medium',
-										item.disabled
-											? 'pointer-events-none opacity-50'
-											: ''
-									)
-								}
-							>
-								{item.name}
-							</CloseButton>
-						))}
-					</div>
-				</DisclosurePanel>
+				{/*Main Navigation - Mobile*/}
+				<div className="overflow-hidden">
+					<DisclosurePanel
+						className="sm:hidden origin-top transition duration-200 ease-out data-[closed]:-translate-y-6 data-[closed]:opacity-0"
+						transition
+					>
+						<div className="space-y-1 px-2 pb-3 pt-2">
+							{mainMenu.map((item) => (
+								<CloseButton
+									key={item.name}
+									as={NavLink}
+									to={item.to}
+									className={({ isActive }: { isActive: boolean }) =>
+										classNames(
+											isActive
+												? 'bg-gray-900 text-white'
+												: 'text-gray-300 hover:bg-gray-700 hover:text-white',
+											'block rounded-md px-3 py-2 text-base font-medium'
+										)
+									}
+								>
+									{item.name}
+								</CloseButton>
+							))}
+						</div>
+					</DisclosurePanel>
+				</div>
 			</div>
 		</Disclosure>
 	);
