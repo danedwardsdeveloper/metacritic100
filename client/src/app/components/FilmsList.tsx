@@ -1,18 +1,23 @@
 import React from 'react';
-import { useFilms } from '../contexts/FilmsContext';
 import FilmCard from './FilmCard';
+import { useUser } from '../contexts/UserContext.tsx';
+import { filmsData } from '../data/filmsData.ts';
 
 export default function FilmsList(): React.ReactElement {
-	const { filmsData, isLoading } = useFilms();
+	const { films: seenFilms, isLoading } = useUser();
 
 	if (isLoading) {
 		return <div>Loading...</div>;
 	}
 
 	return (
-		<div className="pt-6 px-4">
+		<div>
 			{filmsData.map((film) => (
-				<FilmCard key={film.filmId} film={film} />
+				<FilmCard
+					key={film.filmId}
+					film={film}
+					seen={seenFilms[film.filmId] || false}
+				/>
 			))}
 		</div>
 	);
