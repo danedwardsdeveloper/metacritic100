@@ -15,46 +15,6 @@ publicRouter.get('/', (req: Request, res: Response) => {
 	res.json({ message: 'MetaCritic100 API' });
 });
 
-// publicRouter.post(
-// 	'/create-account',
-// 	async (req: Request, res: Response, next: NextFunction) => {
-// 		const { name, email, password } = req.body;
-
-// 		if (!name || !email || !password) {
-// 			return res.status(400).json({ message: 'Missing required fields' });
-// 		}
-
-// 		try {
-// 			const existingUser = await User.findOne({ email });
-// 			if (existingUser) {
-// 				return res.status(409).json({ message: 'User already exists' });
-// 			}
-
-// 			const hashedPassword = await bcrypt.hash(password, 10);
-
-// 			const newUser = new User({
-// 				name,
-// 				email,
-// 				password: hashedPassword,
-// 				films: [],
-// 			});
-
-// 			await newUser.save();
-
-// 			const token = generateToken(newUser._id, newUser.name);
-// 			setToken(res, token);
-
-// 			res.status(201).json({
-// 				name: newUser.name,
-// 				_id: newUser._id,
-// 				message: 'User created successfully',
-// 			});
-// 		} catch (error) {
-// 			next(error);
-// 		}
-// 	}
-// );
-
 // Removes unnecessary MongoDB '_id' and 'id' keys from films array
 function cleanFilmObject(film: any) {
 	const { filmId, seen } = film;
@@ -111,6 +71,7 @@ publicRouter.post('/sign-in', async (req: Request, res: Response) => {
 			message: 'Signed in successfully',
 			name: user.name,
 			userId: user.userId,
+			filmsSeen: filmsSeen,
 			films: cleanedFilms,
 		});
 	} catch (error) {
