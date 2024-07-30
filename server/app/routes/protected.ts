@@ -5,23 +5,12 @@ import {
 	validateToken,
 	clearToken,
 } from '../middleware/components/authTokens.js';
-import { updateUserFilm } from '../services/userService';
+import { updateUserFilm } from '../services/userService.js';
 import User from '../models/User.js';
 import { AuthenticatedRequest } from '../models/AuthenticatedRequest.js';
 
 const protectedRouter = express.Router();
 protectedRouter.use(validateToken);
-
-protectedRouter.get(
-	'/protected',
-	(req: AuthenticatedRequest, res: Response) => {
-		res.json({
-			name: req.user?.name,
-			userId: req.user?.userId,
-			message: 'This is a protected route',
-		});
-	}
-);
 
 protectedRouter.post(
 	'/toggle-film',
