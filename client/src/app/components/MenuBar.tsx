@@ -17,8 +17,7 @@ import {
 
 import { useUser } from '../contexts/UserContext.tsx';
 
-// Tailwind function - don't delete!
-function classNames(...classes: string[]): string {
+function cleanTailwindClassNames(...classes: string[]): string {
 	return classes.filter(Boolean).join(' ');
 }
 
@@ -75,7 +74,7 @@ export default function MenuBar() {
 												}: {
 													isActive: boolean;
 												}) =>
-													classNames(
+													cleanTailwindClassNames(
 														isActive
 															? 'bg-gray-900 text-white'
 															: 'text-gray-300 hover:bg-gray-700 hover:text-white',
@@ -127,7 +126,7 @@ export default function MenuBar() {
 												{({ active }) => (
 													<NavLink
 														to={item.to}
-														className={classNames(
+														className={cleanTailwindClassNames(
 															active ? 'bg-gray-100' : '',
 															'block px-4 py-2 text-sm text-gray-700'
 														)}
@@ -152,7 +151,7 @@ export default function MenuBar() {
 									as={NavLink}
 									to={item.to}
 									className={({ isActive }: { isActive: boolean }) =>
-										classNames(
+										cleanTailwindClassNames(
 											isActive
 												? 'bg-gray-900 text-white'
 												: 'text-gray-300 hover:bg-gray-700 hover:text-white',
