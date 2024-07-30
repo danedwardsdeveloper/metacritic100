@@ -1,9 +1,9 @@
-import { Express } from 'express'
+import { Express } from 'express';
 
-import setupCors from './components/cors'
-import setupGeneralMiddleware from './components/generalMiddleware'
+import setupCors from './components/cors.js';
+import setupGeneralMiddleware from './components/generalMiddleware.js';
 
 export default function setupMiddleware(app: Express) {
-	setupGeneralMiddleware(app)
+	setupGeneralMiddleware(app);
 	setupCors(app);
 }
