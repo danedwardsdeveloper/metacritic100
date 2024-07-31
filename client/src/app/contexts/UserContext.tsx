@@ -71,11 +71,11 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 
 					setFilms(mergedFilms);
 				} else {
-					console.log('Token validation failed');
+					// console.log('Token validation failed');
 					setIsAuthenticated(false);
 				}
 			} catch (error) {
-				console.error('Error initializing user:', error);
+				// console.error('Error initializing user:', error);
 				setIsAuthenticated(false);
 			} finally {
 				setIsLoading(false);
