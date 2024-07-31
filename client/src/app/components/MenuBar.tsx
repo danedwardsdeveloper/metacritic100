@@ -109,15 +109,15 @@ export default function MenuBar() {
 							</div>
 
 							{/* Profile Menu */}
-							<div className="flex items-center">
+							<div className="flex items-center mr-2">
 								<Menu as="div" className="relative ml-3">
 									<div>
-										<MenuButton className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+										<MenuButton className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 hover:ring-2 hover:ring-white hover:ring-offset-2 hover:ring-offset-gray-800">
 											<span className="sr-only">
 												Open profile menu
 											</span>
 											{isAuthenticated ? (
-												<p className="text-white text-xl">
+												<p className="flex items-center justify-center text-white text-xl h-6 w-6">
 													{initial}
 												</p>
 											) : (
