@@ -5,10 +5,10 @@ function setVariable(variable: string): string {
 	return value;
 }
 
-function logVariable(variable: string) {
-	const value = import.meta.env[variable];
-	console.log(`${variable}: ${value}`);
-}
+// function logVariable(variable: string) {
+// 	const value = import.meta.env[variable];
+// 	console.log(`${variable}: ${value}`);
+// }
 
 export const reactEnv = setVariable('VITE_REACT_ENV');
 // logVariable('VITE_REACT_ENV');
