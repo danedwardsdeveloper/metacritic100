@@ -34,9 +34,9 @@ export const validateTokenService = async (
 		);
 		return response.data;
 	} catch (error) {
-		console.error('Error validating token:', error);
+		// console.error('Error validating token:', error);
 		if (axios.isAxiosError(error)) {
-			console.error('Response:', error.response?.data);
+			// console.error('Response:', error.response?.data);
 		}
 		return null;
 	}
