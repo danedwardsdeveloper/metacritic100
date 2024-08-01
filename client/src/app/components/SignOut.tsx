@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useUser } from '../contexts/UserContext.tsx';
 import { signOutService } from '../services/UserService.ts';
+import Metadata from './Metadata';
 
 export default function SignOut() {
 	const navigate = useNavigate();
@@ -19,6 +20,8 @@ export default function SignOut() {
 
 	return (
 		<>
+			<Metadata pageName="Sign out" slug="sign-out" />
+
 			<div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 ">
 				<div className="sm:mx-auto sm:w-full sm:max-w-sm">
 					<img

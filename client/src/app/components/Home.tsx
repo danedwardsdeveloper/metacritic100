@@ -1,10 +1,10 @@
-// import Header from './Header';
 import FilmGrid from './FilmGrid';
+import Metadata from './Metadata';
 
 function Home() {
 	return (
 		<>
-			{/* <Header /> */}
+			<Metadata pageName="Home" />
 			<FilmGrid />
 		</>
 	);
