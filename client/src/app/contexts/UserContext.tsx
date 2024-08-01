@@ -7,26 +7,11 @@ import React, {
 } from 'react';
 
 import {
-	Film,
 	validateTokenService,
 	toggleFilmService,
 } from '../services/UserService';
 import { filmsData } from '../data/filmsData';
-
-interface UserContextType {
-	isLoading: boolean;
-	isAuthenticated: boolean;
-	userId: string;
-	initial: string;
-	films: Record<string, boolean>;
-	filmsSeen: number;
-	syncWithDatabase: () => void;
-	setIsAuthenticated: (value: boolean) => void;
-	setInitial: (name: string) => void;
-	setUserId: (userId: string) => void;
-	toggleFilm: (filmId: string) => void;
-	resetUser: () => void;
-}
+import { Film, UserContextType } from '../../types';
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 

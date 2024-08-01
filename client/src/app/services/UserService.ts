@@ -1,25 +1,13 @@
 import axios, { AxiosError } from 'axios';
 
 import { currentApiBase } from '../utils/environmentChecks';
-
-export interface Film {
-	filmId: string;
-	seen: boolean;
-}
-
-interface ToggleFilmResponse {
-	message: string;
-	filmId: string;
-	newStatus: boolean;
-}
-
-interface TokenValidationResponse {
-	message: string;
-	initial: string;
-	userId: string;
-	filmsSeen: number;
-	films: Film[];
-}
+import {
+	Film,
+	ToggleFilmResponse,
+	CreateAccountResponse,
+	SignInResponse,
+	TokenValidationResponse,
+} from '../../types';
 
 export const validateTokenService = async (
 	films: Film[]
@@ -41,12 +29,6 @@ export const validateTokenService = async (
 		return null;
 	}
 };
-
-interface CreateAccountResponse {
-	message: string;
-	userId?: string;
-	initial?: string;
-}
 
 export const createAccountService = async (
 	name: string,
@@ -75,12 +57,6 @@ export const createAccountService = async (
 		};
 	}
 };
-
-interface SignInResponse {
-	message: string;
-	userId?: number;
-	initial?: string;
-}
 
 export const signInService = async (
 	email: string,
