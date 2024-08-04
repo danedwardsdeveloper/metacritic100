@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 
-import { MetadataContent, MetadataProps } from '../../types';
+import type { MetadataContent, MetadataProps } from '../../types';
 
 export const metadataContent: MetadataContent = {
 	siteName: 'MetaCritic 100',

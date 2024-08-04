@@ -11,7 +11,7 @@ import {
 	toggleFilmService,
 } from '../services/UserService';
 import { filmsData } from '../data/filmsData';
-import { Film, UserContextType } from '../../types';
+import type { Film, UserContextType } from '../../types';
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
