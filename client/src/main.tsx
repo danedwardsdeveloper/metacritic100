@@ -19,6 +19,7 @@ import ErrorElement from './app/components/ErrorElement';
 import './index.tailwind.css';
 
 import { UserProvider } from './app/contexts/UserContext';
+import { ThemeProvider } from './app/contexts/ThemeContext';
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -36,9 +37,11 @@ const router = createBrowserRouter(
 ReactDOM.createRoot(document.getElementById('root')! as HTMLElement).render(
 	<React.StrictMode>
 		<HelmetProvider>
-			<UserProvider>
-				<RouterProvider router={router} />
-			</UserProvider>
+			<ThemeProvider>
+				<UserProvider>
+					<RouterProvider router={router} />
+				</UserProvider>
+			</ThemeProvider>
 		</HelmetProvider>
 	</React.StrictMode>
 );
