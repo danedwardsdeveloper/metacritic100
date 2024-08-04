@@ -7,13 +7,13 @@ export default function About() {
 
 			<div className="px-6 py-24 sm:py-32 lg:px-8">
 				<div className="mx-auto max-w-2xl text-center">
-					<p className="text-base font-semibold leading-7 text-indigo-600">
+					<p className="text-base font-semibold leading-7 text-indigo-600 dark:text-indigo-300 ">
 						The world's best films
 					</p>
-					<h2 className="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+					<h2 className="mt-2 text-4xl font-bold tracking-tight text-gray-900 dark:text-slate-100 sm:text-6xl">
 						MetaCritic 100
 					</h2>
-					<p className="mt-6 text-lg leading-8 text-gray-600">
+					<p className="mt-6 text-lg leading-8 text-gray-600 dark:text-slate-200">
 						MetaCritic 100 is an engaging hobby project that allows film
 						enthusiasts to track their viewing progress through the
 						top-rated films on Metacritic. This fun, unofficial site is
@@ -25,7 +25,7 @@ export default function About() {
 						experience.
 					</p>
 
-					<p className="mt-6 text-lg leading-8 text-gray-600">
+					<p className="mt-6 text-lg leading-8 text-gray-600 dark:text-slate-200">
 						Metacritic is a renowned review aggregator that compiles
 						critic reviews for various media, including films, TV shows,
 						music, and video games. For movies, Metacritic calculates a
@@ -35,13 +35,13 @@ export default function About() {
 						favorable reviews.
 					</p>
 
-					<p className="mt-6 text-base leading-8 text-gray-600">
+					<p className="mt-6 text-base leading-8 text-gray-600 dark:text-slate-200">
 						Site by{' '}
 						<a
 							href="https://danedwardsdeveloper.com/"
 							target="_blank"
 							rel="noopener noreferrer"
-							className="text-indigo-500 underline underline-offset-2 decoration-indigo-300 hover:text-indigo-600 hover:decoration-indigo-500 transition duration-200"
+							className="text-indigo-500 underline underline-offset-2 hover:text-indigo-600 hover:decoration-indigo-500 transition duration-200"
 						>
 							Dan Edwards
 						</a>
