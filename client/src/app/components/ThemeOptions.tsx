@@ -39,7 +39,7 @@ export default function ThemeOptions() {
 						<button
 							onClick={() => setTheme(option.value)}
 							className={`
-                                flex items-center w-full px-4 py-2 text-sm text-gray-700
+                                flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:hover:text-white dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600
                                 ${active ? 'bg-gray-100' : ''}
                                 ${theme === option.value ? 'font-semibold' : ''}
                             `}
