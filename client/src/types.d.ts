@@ -3,6 +3,20 @@ export interface Film {
 	seen: boolean;
 }
 
+export interface FilmsDataElement {
+	filmId: string;
+	title: string;
+	year: number;
+	language: string;
+	description: string;
+	metascore: number;
+	rank: number;
+}
+
+interface FilmCardProps {
+	film: FilmsDataElement;
+}
+
 export interface ToggleFilmResponse {
 	message: string;
 	filmId: string;
