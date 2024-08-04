@@ -59,3 +59,14 @@ export interface MetadataProps {
 	pageName?: string;
 	slug?: string;
 }
+
+export type Theme = 'light' | 'dark' | 'system';
+
+export interface ThemeContextType {
+	theme: Theme;
+	setTheme: (newTheme: Theme) => void;
+}
+
+export interface ThemeProviderProps {
+	children: React.ReactNode;
+}
