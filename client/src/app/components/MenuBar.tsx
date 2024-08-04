@@ -4,48 +4,20 @@ import {
 	Disclosure,
 	DisclosureButton,
 	DisclosurePanel,
-	Menu,
-	MenuButton,
-	MenuItem,
-	MenuItems,
 } from '@headlessui/react';
-import {
-	Bars3Icon,
-	XMarkIcon,
-	UserCircleIcon,
-} from '@heroicons/react/24/outline';
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 
+import ProfileDropdown from './ProfileDropdown.tsx';
 import { useUser } from '../contexts/UserContext.tsx';
-
-function cleanTailwindClassNames(...classes: string[]): string {
-	return classes.filter(Boolean).join(' ');
-}
+import { cleanTailwindClassNames } from '../utils/utils';
 
 export default function MenuBar() {
-	const { isAuthenticated, filmsSeen, initial } = useUser();
+	const { filmsSeen } = useUser();
 
 	const mainMenu = [
 		{ name: 'MetaCritic 100', to: '/' },
 		{ name: 'About', to: '/about' },
 	];
-
-	const profileMenu = isAuthenticated
-		? [
-				{
-					name: 'Sign out',
-					to: '/sign-out',
-				},
-		  ]
-		: [
-				{
-					name: 'Create account',
-					to: '/create-account',
-				},
-				{
-					name: 'Sign in',
-					to: '/sign-in',
-				},
-		  ];
 
 	return (
 		<Disclosure as="nav" className="bg-gray-800 sticky top-0 z-50 shadow-md">
@@ -108,48 +80,8 @@ export default function MenuBar() {
 								</div>
 							</div>
 
-							{/* Profile Menu */}
-							<div className="flex items-center mr-2">
-								<Menu as="div" className="relative ml-3">
-									<div>
-										<MenuButton className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 hover:ring-2 hover:ring-white hover:ring-offset-2 hover:ring-offset-gray-800">
-											<span className="sr-only">
-												Open profile menu
-											</span>
-											{isAuthenticated ? (
-												<p className="flex items-center justify-center text-white text-xl h-6 w-6">
-													{initial}
-												</p>
-											) : (
-												<UserCircleIcon
-													className="block h-6 w-6 text-white"
-													aria-hidden="true"
-												/>
-											)}
-										</MenuButton>
-									</div>
-									<MenuItems
-										transition
-										className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-									>
-										{profileMenu.map((item) => (
-											<MenuItem key={item.name}>
-												{({ active }) => (
-													<NavLink
-														to={item.to}
-														className={cleanTailwindClassNames(
-															active ? 'bg-gray-100' : '',
-															'block px-4 py-2 text-sm text-gray-700'
-														)}
-													>
-														{item.name}
-													</NavLink>
-												)}
-											</MenuItem>
-										))}
-									</MenuItems>
-								</Menu>
-							</div>
+							{/* Profile dropdown */}
+							<ProfileDropdown />
 						</div>
 					</div>
 
