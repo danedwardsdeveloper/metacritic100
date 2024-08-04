@@ -2,9 +2,9 @@
 
 ~ [Live site](https://metacritic100.com/) ~
 
-Track your progress through MetaCritic's top 100 films with this MERN stack web application. Features a stateless Express server for account management. Deployed with [Fly.io](https://fly.io/).
+Track your progress through MetaCritic's top 100 films with this MERN stack web application. Deployed with [Fly.io](https://fly.io/).
 
-![MetaCritic100 desktop screenshot]()
+![MetaCritic100 desktop screenshot](https://raw.githubusercontent.com/danedwardsdeveloper/metacritic100/main/screenshot.webp)
 
 ## Features
 
