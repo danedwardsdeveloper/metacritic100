@@ -1,12 +1,7 @@
-import React from 'react';
-import { Film } from '../data/filmsData';
 import { useUser } from '../contexts/UserContext.tsx';
+import { FilmCardProps } from '../../types';
 
-interface FilmCardProps {
-	film: Film;
-}
-
-const FilmCard: React.FC<FilmCardProps> = ({ film }) => {
+export default function FilmCard({ film }: FilmCardProps) {
 	const { films: seenFilms, toggleFilm } = useUser();
 	const seen = seenFilms[film.filmId] || false;
 
@@ -37,10 +32,14 @@ const FilmCard: React.FC<FilmCardProps> = ({ film }) => {
 					</span>
 					<input
 						type="checkbox"
-						id={film.filmId}
-						className="bg-slate-100 dark:bg-slate-600 hover:bg-slate-200 rounded-sm focus:ring-green-500 text-green-500 hover:text-green-600 h-6 w-6"
-						checked={seen}
 						onChange={handleToggle}
+						id={`film-checkbox-${film.filmId}`}
+						checked={seen}
+						aria-label={`Mark ${film.title} as ${
+							seen ? 'unseen' : 'seen'
+						}`}
+						aria-labelledby={`film-title-${film.filmId}`}
+						className="bg-slate-100 dark:bg-slate-600 hover:bg-slate-200 rounded-sm focus:ring-green-500 text-green-500 hover:text-green-600 h-6 w-6"
 					/>
 				</div>
 			</div>
@@ -50,6 +49,4 @@ const FilmCard: React.FC<FilmCardProps> = ({ film }) => {
 			<p className=" text-justify dark:text-slate-300">{film.description}</p>
 		</div>
 	);
-};
-
-export default FilmCard;
+}
