@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import FilmCard from './FilmCard.tsx';
 import { useUser } from '../contexts/UserContext.tsx';
-import { filmsData, Film } from '../data/filmsData.ts';
+import { filmsData } from '../data/filmsData.ts';
+import { FilmsDataElement } from '../../types';
 
 export default function FilmGrid(): React.ReactElement {
 	const { isLoading } = useUser();
@@ -25,7 +26,10 @@ export default function FilmGrid(): React.ReactElement {
 		return <div>Loading...</div>;
 	}
 
-	const columnContents: Film[][] = Array.from({ length: columns }, () => []);
+	const columnContents: FilmsDataElement[][] = Array.from(
+		{ length: columns },
+		() => []
+	);
 	filmsData.forEach((film, index) => {
 		columnContents[index % columns].push(film);
 	});
