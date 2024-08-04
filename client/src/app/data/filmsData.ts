@@ -1,14 +1,6 @@
-export interface Film {
-	filmId: string;
-	title: string;
-	year: number;
-	language: string;
-	description: string;
-	metascore: number;
-	rank: number;
-}
+import { FilmsDataElement } from '../../types';
 
-export const filmsData: Film[] = [
+export const filmsData: FilmsDataElement[] = [
 	{
 		filmId: 'dekalog',
 		title: 'Dekalog',
